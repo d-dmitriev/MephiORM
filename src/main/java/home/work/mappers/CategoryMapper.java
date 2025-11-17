@@ -11,10 +11,14 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "courses", ignore = true)
     Category toEntity(CreateCategoryRequest request);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "name", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "description", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "courses", ignore = true)
     void updateCategory(UpdateCategoryRequest categoryDetails, @MappingTarget Category profile);
 
     CategorySimple toSimple(Category category);

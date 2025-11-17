@@ -15,5 +15,6 @@ public interface AssignmentMapper {
     @Mapping(target = "title", source = "request.title")
     @Mapping(target = "lesson", source = "lesson")
     @Mapping(target = "submissions", ignore = true)
+    @Mapping(target = "maxScore", ignore = true)
     Assignment toEntity(CreateAssignmentRequest request, Lesson lesson);
 }

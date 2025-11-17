@@ -16,9 +16,21 @@ public interface EnrollmentMapper {
     @Mapping(target = "courseId", source = "enrollment.course.id")
     EnrollmentSimple toSimple(Enrollment enrollment);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "student", ignore = true)
+    @Mapping(target = "course", ignore = true)
+    @Mapping(target = "enrollDate", ignore = true)
+    @Mapping(target = "completedAt", ignore = true)
+    @Mapping(target = "progress", ignore = true)
     @Mapping(target = "status", source = "status")
     void updateEnrollmentStatus(String status, @MappingTarget Enrollment enrollment);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "student", ignore = true)
+    @Mapping(target = "course", ignore = true)
+    @Mapping(target = "enrollDate", ignore = true)
+    @Mapping(target = "completedAt", ignore = true)
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "progress", source = "progress")
     void updateEnrollmentProgress(Double progress, @MappingTarget Enrollment enrollment);
 

@@ -23,10 +23,15 @@ public interface QuizMapper {
     @Mapping(target = "title", source = "request.title")
     @Mapping(target = "description", source = "request.description")
     @Mapping(target = "module", source = "module")
+    @Mapping(target = "timeLimit", ignore = true)
+    @Mapping(target = "maxAttempts", ignore = true)
+    @Mapping(target = "questions", ignore = true)
+    @Mapping(target = "quizSubmissions", ignore = true)
     Quiz toEntity(CreateQuizRequest request, Module module);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "quiz", source = "quiz")
+    @Mapping(target = "answerOptions", ignore = true)
     Question toEntity(CreateQuestionRequest request, Quiz quiz);
 
     @Mapping(target = "id", ignore = true)
