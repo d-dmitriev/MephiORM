@@ -28,8 +28,8 @@ INSERT INTO course_tag (course_id, tag_id) VALUES
 (1, 3),
 (2, 4);
 
-INSERT INTO modules (title, course_id) VALUES
-('Module 1', 1);
+INSERT INTO modules (title, course_id, order_index) VALUES
+('Module 1', 1, 1);
 
 INSERT INTO lessons (title, module_id) VALUES
 ('Lesson 1', 1);

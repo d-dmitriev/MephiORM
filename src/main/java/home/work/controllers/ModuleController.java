@@ -1,6 +1,7 @@
 package home.work.controllers;
 
-import home.work.entities.Module;
+import home.work.dto.request.CreateModuleRequest;
+import home.work.dto.request.UpdateModuleRequest;
 import home.work.services.ModuleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +18,8 @@ public class ModuleController {
 
     @PostMapping
     public ResponseEntity<?> createModule(
-            @RequestParam Long courseId,
-            @Valid @RequestBody Module module) {
-        return ResponseEntity.ok(moduleService.createModule(courseId, module));
+            @Valid @RequestBody CreateModuleRequest module) {
+        return ResponseEntity.ok(moduleService.createModule(module));
     }
 
     @GetMapping("/{id}")
@@ -30,7 +30,7 @@ public class ModuleController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateModule(
             @PathVariable Long id,
-            @Valid @RequestBody Module moduleDetails) {
+            @Valid @RequestBody UpdateModuleRequest moduleDetails) {
         return ResponseEntity.ok(moduleService.updateModule(id, moduleDetails));
     }
 

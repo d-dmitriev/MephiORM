@@ -1,14 +1,7 @@
 package home.work;
 
-import home.work.dto.response.CourseResponse;
-import home.work.dto.request.CreateAssignmentRequest;
-import home.work.dto.request.CreateCategoryRequest;
-import home.work.dto.request.CreateCourseRequest;
-import home.work.dto.request.CreateUserRequest;
+import home.work.dto.request.*;
 import home.work.dto.simple.*;
-import home.work.entities.Course;
-import home.work.entities.Lesson;
-import home.work.entities.Module;
 import home.work.services.*;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -115,15 +108,16 @@ class ServiceLayerIntegrationTest {
         course.setCategoryId(categoryCreated.getId());
         CourseSimple courseCreated  = courseService.createCourse(course);
 
-        Module module = new Module();
+        CreateModuleRequest module = new CreateModuleRequest();
         module.setTitle("Assignment Module");
+        module.setCourseId(courseCreated.getId());
 //        module.setCourse(courseCreated);
-        module = moduleService.createModule(courseCreated.getId(), module);
+        ModuleSimple moduleCreated = moduleService.createModule(module);
 
-        Lesson lesson = new Lesson();
+        CreateLessonRequest lesson = new CreateLessonRequest();
         lesson.setTitle("Assignment Lesson");
-        lesson.setModule(module);
-        lesson = lessonService.createLesson(module.getId(), lesson);
+        lesson.setModuleId(moduleCreated.getId());
+        LessonSimple lessonCreated = lessonService.createLesson(lesson);
 
         // Create assignment
         CreateAssignmentRequest assignment = new CreateAssignmentRequest();
@@ -131,7 +125,7 @@ class ServiceLayerIntegrationTest {
         assignment.setDescription("Test Description");
         assignment.setDueDate(LocalDateTime.now().plusDays(7));
 //        assignment.setMaxScore(100);
-        AssignmentSimple assignmentCreated = assignmentService.createAssignment(lesson.getId(), assignment);
+        AssignmentSimple assignmentCreated = assignmentService.createAssignment(lessonCreated.getId(), assignment);
 
         assertNotNull(assignmentCreated.getId());
 //        assertEquals(lesson.getId(), assignmentCreated.getLesson().getId());

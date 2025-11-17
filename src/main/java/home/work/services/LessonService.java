@@ -1,6 +1,10 @@
 package home.work.services;
 
+import home.work.dto.request.CreateLessonRequest;
+import home.work.dto.request.UpdateLessonRequest;
+import home.work.dto.simple.LessonSimple;
 import home.work.entities.Lesson;
+import home.work.mappers.LessonMapper;
 import home.work.repositories.AssignmentRepository;
 import home.work.repositories.LessonRepository;
 import home.work.repositories.ModuleRepository;
@@ -9,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -17,59 +22,49 @@ public class LessonService {
     private final ModuleRepository moduleRepository;
     private final AssignmentRepository assignmentRepository;
 
+    private final LessonMapper lessonMapper;
+
     @Transactional
-    public Lesson createLesson(Long moduleId, Lesson lesson) {
-        var module = moduleRepository.findById(moduleId)
+    public LessonSimple createLesson(CreateLessonRequest request) {
+        var module = moduleRepository.findById(request.getModuleId())
                 .orElseThrow(() -> new RuntimeException("Module not found"));
 
         // Set order index if not provided
-        if (lesson.getOrderIndex() == null) {
-            Integer maxOrderIndex = lessonRepository.findByModuleId(moduleId).stream()
-                    .mapToInt(Lesson::getOrderIndex)
+        if (request.getOrderIndex() == null) {
+            var maxOrderIndex = lessonRepository.findByModuleId(request.getModuleId()).stream()
+                    .map(Lesson::getOrderIndex)
+                    .filter(Objects::nonNull)
+                    .mapToInt(Integer::intValue)
                     .max()
                     .orElse(0);
-            lesson.setOrderIndex(maxOrderIndex + 1);
+            request.setOrderIndex(maxOrderIndex + 1);
         }
+        Lesson lesson = lessonMapper.toEntity(request, module);
 
-        lesson.setModule(module);
-        return lessonRepository.save(lesson);
+        return lessonMapper.toSimple(lessonRepository.save(lesson));
     }
 
     @Transactional
-    public Lesson updateLesson(Long lessonId, Lesson lessonDetails) {
+    public LessonSimple updateLesson(Long lessonId, UpdateLessonRequest lessonDetails) {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new RuntimeException("Lesson not found"));
 
-        if (lessonDetails.getTitle() != null) {
-            lesson.setTitle(lessonDetails.getTitle());
-        }
-        if (lessonDetails.getContent() != null) {
-            lesson.setContent(lessonDetails.getContent());
-        }
-        if (lessonDetails.getVideoUrl() != null) {
-            lesson.setVideoUrl(lessonDetails.getVideoUrl());
-        }
-        if (lessonDetails.getDuration() != null) {
-            lesson.setDuration(lessonDetails.getDuration());
-        }
-        if (lessonDetails.getOrderIndex() != null) {
-            lesson.setOrderIndex(lessonDetails.getOrderIndex());
-        }
+        lessonMapper.updateLesson(lessonDetails, lesson);
 
-        return lessonRepository.save(lesson);
+        return lessonMapper.toSimple(lessonRepository.save(lesson));
     }
 
-    public Lesson getLessonWithAssignments(Long lessonId) {
-        return lessonRepository.findByIdWithAssignments(lessonId)
+    public LessonSimple getLessonWithAssignments(Long lessonId) {
+        return lessonRepository.findByIdWithAssignments(lessonId).map(lessonMapper::toSimple)
                 .orElseThrow(() -> new RuntimeException("Lesson not found"));
     }
 
-    public List<Lesson> getModuleLessons(Long moduleId) {
-        return lessonRepository.findByModuleIdOrderByOrderIndex(moduleId);
+    public List<LessonSimple> getModuleLessons(Long moduleId) {
+        return lessonRepository.findByModuleIdOrderByOrderIndex(moduleId).stream().map(lessonMapper::toSimple).toList();
     }
 
-    public List<Lesson> getModuleLessonsWithAssignments(Long moduleId) {
-        return lessonRepository.findByModuleIdWithAssignments(moduleId);
+    public List<LessonSimple> getModuleLessonsWithAssignments(Long moduleId) {
+        return lessonRepository.findByModuleIdWithAssignments(moduleId).stream().map(lessonMapper::toSimple).toList();
     }
 
     @Transactional
@@ -109,9 +104,10 @@ public class LessonService {
         return lessonRepository.countByCourseId(courseId);
     }
 
-    public List<Lesson> searchLessonsByTitle(String title) {
+    public List<LessonSimple> searchLessonsByTitle(String title) {
         return lessonRepository.findAll().stream()
                 .filter(lesson -> lesson.getTitle().toLowerCase().contains(title.toLowerCase()))
+                .map(lessonMapper::toSimple)
                 .toList();
     }
 

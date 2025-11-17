@@ -1,6 +1,7 @@
 package home.work.controllers;
 
-import home.work.entities.Lesson;
+import home.work.dto.request.CreateLessonRequest;
+import home.work.dto.request.UpdateLessonRequest;
 import home.work.services.LessonService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +18,8 @@ public class LessonController {
 
     @PostMapping
     public ResponseEntity<?> createLesson(
-            @RequestParam Long moduleId,
-            @Valid @RequestBody Lesson lesson) {
-        return ResponseEntity.ok( lessonService.createLesson(moduleId, lesson));
+            @Valid @RequestBody CreateLessonRequest lesson) {
+        return ResponseEntity.ok( lessonService.createLesson(lesson));
     }
 
     @GetMapping("/{id}")
@@ -30,7 +30,7 @@ public class LessonController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateLesson(
             @PathVariable Long id,
-            @Valid @RequestBody Lesson lessonDetails) {
+            @Valid @RequestBody UpdateLessonRequest lessonDetails) {
         return ResponseEntity.ok(lessonService.updateLesson(id, lessonDetails));
     }
 

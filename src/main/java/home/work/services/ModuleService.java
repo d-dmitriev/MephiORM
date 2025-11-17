@@ -1,6 +1,10 @@
 package home.work.services;
 
+import home.work.dto.request.CreateModuleRequest;
+import home.work.dto.request.UpdateModuleRequest;
+import home.work.dto.simple.ModuleSimple;
 import home.work.entities.Module;
+import home.work.mappers.ModuleMapper;
 import home.work.repositories.CourseRepository;
 import home.work.repositories.LessonRepository;
 import home.work.repositories.ModuleRepository;
@@ -9,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -17,53 +22,49 @@ public class ModuleService {
     private final CourseRepository courseRepository;
     private final LessonRepository lessonRepository;
 
+    private final ModuleMapper moduleMapper;
+
     @Transactional
-    public Module createModule(Long courseId, Module module) {
-        var course = courseRepository.findById(courseId)
+    public ModuleSimple createModule(CreateModuleRequest request) {
+        var course = courseRepository.findById(request.getCourseId())
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
         // Set order index if not provided
-        if (module.getOrderIndex() == null) {
-            Integer maxOrderIndex = moduleRepository.findByCourseId(courseId).stream()
-                    .mapToInt(Module::getOrderIndex)
+        if (request.getOrderIndex() == null) {
+            var maxOrderIndex = moduleRepository.findByCourseId(request.getCourseId()).stream()
+                    .map(Module::getOrderIndex)
+                    .filter(Objects::nonNull)
+                    .mapToInt(Integer::intValue)
                     .max()
                     .orElse(0);
-            module.setOrderIndex(maxOrderIndex + 1);
+            request.setOrderIndex(maxOrderIndex + 1);
         }
 
-        module.setCourse(course);
-        return moduleRepository.save(module);
+        Module module = moduleMapper.toEntity(request, course);
+        return moduleMapper.toSimple(moduleRepository.save(module));
     }
 
     @Transactional
-    public Module updateModule(Long moduleId, Module moduleDetails) {
+    public ModuleSimple updateModule(Long moduleId, UpdateModuleRequest moduleDetails) {
         Module module = moduleRepository.findById(moduleId)
                 .orElseThrow(() -> new RuntimeException("Module not found"));
 
-        if (moduleDetails.getTitle() != null) {
-            module.setTitle(moduleDetails.getTitle());
-        }
-        if (moduleDetails.getDescription() != null) {
-            module.setDescription(moduleDetails.getDescription());
-        }
-        if (moduleDetails.getOrderIndex() != null) {
-            module.setOrderIndex(moduleDetails.getOrderIndex());
-        }
+        moduleMapper.updateModule(moduleDetails, module);
 
-        return moduleRepository.save(module);
+        return moduleMapper.toSimple(moduleRepository.save(module));
     }
 
-    public Module getModuleWithLessons(Long moduleId) {
-        return moduleRepository.findByIdWithLessons(moduleId)
+    public ModuleSimple getModuleWithLessons(Long moduleId) {
+        return moduleRepository.findByIdWithLessons(moduleId).map(moduleMapper::toSimple)
                 .orElseThrow(() -> new RuntimeException("Module not found"));
     }
 
-    public List<Module> getCourseModules(Long courseId) {
-        return moduleRepository.findByCourseIdOrderByOrderIndex(courseId);
+    public List<ModuleSimple> getCourseModules(Long courseId) {
+        return moduleRepository.findByCourseIdOrderByOrderIndex(courseId).stream().map(moduleMapper::toSimple).toList();
     }
 
-    public List<Module> getCourseModulesWithLessons(Long courseId) {
-        return moduleRepository.findByCourseIdWithLessons(courseId);
+    public List<ModuleSimple> getCourseModulesWithLessons(Long courseId) {
+        return moduleRepository.findByCourseIdWithLessons(courseId).stream().map(moduleMapper::toSimple).toList();
     }
 
     @Transactional
