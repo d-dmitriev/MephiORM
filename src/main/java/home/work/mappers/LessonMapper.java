@@ -17,6 +17,7 @@ public interface LessonMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "title", source = "request.title")
     @Mapping(target = "orderIndex", source = "request.orderIndex")
+    @Mapping(target = "assignments", ignore = true)
     Lesson toEntity(CreateLessonRequest request, Module module);
 
     @Mapping(target = "id", ignore = true)
@@ -25,5 +26,7 @@ public interface LessonMapper {
     @Mapping(target = "videoUrl", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "duration", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "orderIndex", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "assignments", ignore = true)
+    @Mapping(target = "module", ignore = true)
     void updateLesson(UpdateLessonRequest moduleDetails, @MappingTarget Lesson profile);
 }
