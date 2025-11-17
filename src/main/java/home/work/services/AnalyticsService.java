@@ -1,0 +1,100 @@
+package home.work.services;
+
+import home.work.entities.Enrollment;
+import home.work.entities.Submission;
+import home.work.entities.UserRole;
+import home.work.repositories.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class AnalyticsService {
+    private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
+    private final EnrollmentRepository enrollmentRepository;
+    private final SubmissionRepository submissionRepository;
+    private final QuizSubmissionRepository quizSubmissionRepository;
+    private final CourseReviewRepository courseReviewRepository;
+
+    public PlatformStatistics getPlatformStatistics() {
+        Long totalCourses = courseRepository.count();
+        Long totalStudents = (long) userRepository.findByRole(UserRole.STUDENT).size();
+        Long totalTeachers = (long) userRepository.findByRole(UserRole.TEACHER).size();
+        Long totalEnrollments = enrollmentRepository.count();
+        Long totalSubmissions = submissionRepository.count();
+
+        return new PlatformStatistics(totalCourses, totalStudents, totalTeachers, totalEnrollments, totalSubmissions);
+    }
+
+    public CourseStatistics getCourseStatistics(Long courseId) {
+        Long enrollmentCount = enrollmentRepository.countByCourseId(courseId);
+        Long assignmentCount = submissionRepository.countByCourseId(courseId);
+        Double averageRating = courseReviewRepository.findAverageRatingByCourseId(courseId);
+        Long reviewCount = courseReviewRepository.countByCourseId(courseId);
+
+        return new CourseStatistics(enrollmentCount, assignmentCount, averageRating, reviewCount);
+    }
+
+    public StudentProgress getStudentProgress(Long studentId, Long courseId) {
+        Double progress = enrollmentRepository.findByStudentIdAndCourseId(studentId, courseId)
+                .map(Enrollment::getProgress)
+                .orElse(0.0);
+
+        Long submittedAssignments = (long) submissionRepository.findByStudentIdAndAssignmentLessonModuleCourseId(studentId, courseId).size();
+        Long completedQuizzes = (long) quizSubmissionRepository.findByStudentIdAndQuizId(studentId, courseId).size();
+        Double averageScore = getUserAverageScore(studentId, courseId);
+
+        return new StudentProgress(progress, submittedAssignments, completedQuizzes, averageScore);
+    }
+
+    private Double getUserAverageScore(Long studentId, Long courseId) {
+        List<Submission> submissions = submissionRepository.findByStudentIdAndAssignmentLessonModuleCourseId(studentId, courseId);
+        if (submissions.isEmpty()) {
+            return 0.0;
+        }
+
+        return submissions.stream()
+                .filter(s -> s.getScore() != null)
+                .mapToInt(Submission::getScore)
+                .average()
+                .orElse(0.0);
+    }
+
+    public Map<String, Long> getEnrollmentTrend() {
+        // This would typically query enrollments by date
+        // Simplified version for demonstration
+        return enrollmentRepository.findAll().stream()
+                .collect(Collectors.groupingBy(
+                        e -> e.getEnrollDate().toLocalDate().toString(),
+                        Collectors.counting()
+                ));
+    }
+
+    // DTO classes for analytics
+    public record PlatformStatistics(
+            Long totalCourses,
+            Long totalStudents,
+            Long totalTeachers,
+            Long totalEnrollments,
+            Long totalSubmissions
+    ) {}
+
+    public record CourseStatistics(
+            Long enrollmentCount,
+            Long assignmentCount,
+            Double averageRating,
+            Long reviewCount
+    ) {}
+
+    public record StudentProgress(
+            Double progress,
+            Long submittedAssignments,
+            Long completedQuizzes,
+            Double averageScore
+    ) {}
+}

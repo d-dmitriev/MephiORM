@@ -1,0 +1,36 @@
+spring:
+  main:
+    banner-mode: off
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/learning_platform
+    username: postgres
+    password: ${DB_PASSWORD:mysecretpassword}
+#    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        transaction:
+          jta:
+            platform: none
+    defer-datasource-initialization: true
+#
+
+#  jpa:
+    hibernate:
+      ddl-auto: create-drop
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
+#        format_sql: true
+#    show-sql: true
+
+  sql:
+    init:
+      mode: always
+#      data-locations: classpath:data.sql
+#logging:
+#  level:
+#    org.hibernate.SQL: DEBUG
+#    org.hibernate.orm.jdbc.bind: TRACE
