@@ -173,7 +173,7 @@ mvn spring-boot:run
 mvn test
 ```
 
-> ✅ Все тесты проходят успешно.
+Также в проект добавлена коллекция [Postman](postman_collection.json).
 
 ---
 
@@ -238,14 +238,13 @@ learning-platform/
 │   │   ├── resources/
 │   │   │   ├── application.yml        # Основная конфигурация
 │   │   │   ├── data.sql               # Предзаполнение БД
-│   │   │   └── schema-test.sql        # Тестовая схема (не используется)
 │   │   └── resources/
 │   │       └── application-test.properties  # Конфиг для тестов
 │   └── test/
 │       ├── java/
 │       │   └── home/work/             # Интеграционные тесты
 │       └── resources/
-│           └── data-test.sql          # Данные для тестов (пустой)
+│           └── data-test.sql          # Данные для тестов
 └── target/
 ```
 
