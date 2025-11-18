@@ -1,21 +1,21 @@
 package home.work.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class CourseResponse {
-    private final Long id;
-    private final String title;
-    private final String description;
-    private final Integer duration;
-    private final LocalDateTime startDate;
-    private final LocalDateTime createdAt;
-    private final Long teacherId;
-    private final String teacherName;
-    private final Long categoryId;
-    private final String categoryName;
+    private Long id;
+    private String title;
+    private String description;
+    private Integer duration;
+    private LocalDateTime startDate;
+    private LocalDateTime createdAt;
+    private Long teacherId;
+    private String teacherName;
+    private Long categoryId;
+    private String categoryName;
 }
