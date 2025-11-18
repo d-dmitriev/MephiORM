@@ -91,8 +91,8 @@ public class EnrollmentJpaTest {
         // создаём ещё одного студента и записываем его на тот же курс
         User other = userRepository.findById(4L).orElseGet(() -> {
             User u = new User();
-            try { u.getClass().getMethod("setName", String.class).invoke(u, "Other Student"); } catch (Exception ignored) {}
-            try { u.getClass().getMethod("setEmail", String.class).invoke(u, "other_student@example.com"); } catch (Exception ignored) {}
+            u.setName("Other Student");
+            u.setEmail("other_student@example.com");
             return userRepository.save(u);
         });
 

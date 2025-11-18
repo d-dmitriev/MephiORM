@@ -1,10 +1,6 @@
 package home.work;
 
-import home.work.entities.Assignment;
-import home.work.entities.Course;
-import home.work.entities.Submission;
-import home.work.entities.User;
-import home.work.entities.Lesson;
+import home.work.entities.*;
 import home.work.entities.Module;
 import home.work.repositories.*;
 import jakarta.transaction.Transactional;
@@ -15,9 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -12,7 +12,9 @@ import java.util.Optional;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findByCategoryName(String categoryName);
+
     List<Course> findByTeacherId(Long teacherId);
+
     List<Course> findByTitleContainingIgnoreCase(String title);
 
     @Query("SELECT c FROM Course c LEFT JOIN FETCH c.teacher LEFT JOIN FETCH c.category WHERE c.id = :id")

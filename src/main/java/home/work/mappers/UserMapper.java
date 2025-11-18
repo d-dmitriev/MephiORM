@@ -10,6 +10,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     UserSimple toSimple(User user);
+
     UserWithProfile toFull(User user);
 
     @Mapping(target = "id", ignore = true)

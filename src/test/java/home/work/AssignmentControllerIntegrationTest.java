@@ -1,13 +1,8 @@
 package home.work;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import home.work.entities.Assignment;
-import home.work.entities.Category;
-import home.work.entities.Course;
-import home.work.entities.Lesson;
+import home.work.entities.*;
 import home.work.entities.Module;
-import home.work.entities.User;
-import home.work.entities.UserRole;
 import home.work.repositories.*;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,9 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

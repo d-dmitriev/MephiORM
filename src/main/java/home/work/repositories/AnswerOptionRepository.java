@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface AnswerOptionRepository extends JpaRepository<AnswerOption, Long> {
     List<AnswerOption> findByQuestionId(Long questionId);
+
     List<AnswerOption> findByQuestionIdAndIsCorrect(Long questionId, Boolean isCorrect);
 
     @Query("SELECT ao FROM AnswerOption ao WHERE ao.question.quiz.id = :quizId")

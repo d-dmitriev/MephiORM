@@ -15,8 +15,11 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface QuizMapper {
     QuizSimple toSimple(Quiz request);
+
     QuestionSimple toSimple(Question request);
+
     AnswerOptionSimple toSimple(AnswerOption request);
+
     QuizSubmissionSimple toSimple(QuizSubmission request);
 
     @Mapping(target = "id", ignore = true)

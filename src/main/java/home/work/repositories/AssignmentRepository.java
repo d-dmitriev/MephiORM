@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     List<Assignment> findByLessonId(Long lessonId);
+
     List<Assignment> findByDueDateBeforeAndLessonModuleCourseId(LocalDateTime dueDate, Long courseId);
 
     @Query("SELECT a FROM Assignment a LEFT JOIN FETCH a.submissions WHERE a.id = :id")

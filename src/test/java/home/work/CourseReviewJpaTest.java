@@ -10,12 +10,12 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Arrays;
-import org.springframework.dao.DataIntegrityViolationException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -146,7 +146,7 @@ public class CourseReviewJpaTest {
         List<Object[]> res = courseReviewRepository.findCourseIdsWithAverageRatingAbove(3.9);
         assertFalse(res.isEmpty());
         // каждый элемент: [courseId, avg]
-        boolean containsCourse = res.stream().anyMatch(o -> ((Number)o[0]).longValue() == course.getId());
+        boolean containsCourse = res.stream().anyMatch(o -> ((Number) o[0]).longValue() == course.getId());
         assertTrue(containsCourse);
     }
 }

@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface ModuleRepository extends JpaRepository<Module, Long> {
     List<Module> findByCourseId(Long courseId);
+
     List<Module> findByCourseIdOrderByOrderIndex(Long courseId);
 
     @Query("SELECT m FROM Module m LEFT JOIN FETCH m.lessons WHERE m.id = :id")

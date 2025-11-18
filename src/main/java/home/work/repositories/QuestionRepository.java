@@ -12,7 +12,9 @@ import java.util.Optional;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByQuizId(Long quizId);
+
     List<Question> findByQuizIdOrderById(Long quizId);
+
     List<Question> findByType(QuestionType type);
 
     @Query("SELECT q FROM Question q LEFT JOIN FETCH q.answerOptions WHERE q.id = :id")

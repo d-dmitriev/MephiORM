@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Long> {
     Optional<Tag> findByName(String name);
+
     List<Tag> findByNameContainingIgnoreCase(String name);
 
     @Query("SELECT t FROM Tag t JOIN t.courses c WHERE c.id = :courseId")

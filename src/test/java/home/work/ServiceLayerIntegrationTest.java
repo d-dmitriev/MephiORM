@@ -145,7 +145,7 @@ class ServiceLayerIntegrationTest {
         course.setTitle("Assignment Course");
         course.setTeacherId(teacherCreated.getId());
         course.setCategoryId(categoryCreated.getId());
-        CourseSimple courseCreated  = courseService.createCourse(course);
+        CourseSimple courseCreated = courseService.createCourse(course);
 
         CreateModuleRequest module = new CreateModuleRequest();
         module.setTitle("Assignment Module");

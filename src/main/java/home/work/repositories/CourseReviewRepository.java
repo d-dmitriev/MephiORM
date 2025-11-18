@@ -11,7 +11,9 @@ import java.util.Optional;
 @Repository
 public interface CourseReviewRepository extends JpaRepository<CourseReview, Long> {
     List<CourseReview> findByCourseId(Long courseId);
+
     List<CourseReview> findByStudentId(Long studentId);
+
     List<CourseReview> findByRatingGreaterThanEqual(Integer minRating);
 
     Optional<CourseReview> findByStudentIdAndCourseId(Long studentId, Long courseId);

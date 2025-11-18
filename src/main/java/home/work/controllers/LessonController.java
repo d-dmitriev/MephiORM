@@ -19,7 +19,7 @@ public class LessonController {
     @PostMapping
     public ResponseEntity<?> createLesson(
             @Valid @RequestBody CreateLessonRequest lesson) {
-        return ResponseEntity.ok( lessonService.createLesson(lesson));
+        return ResponseEntity.ok(lessonService.createLesson(lesson));
     }
 
     @GetMapping("/{id}")

@@ -13,6 +13,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface CourseMapper {
     CourseSimple toSimple(Course course);
+
     CourseReviewSimple toSimple(CourseReview review);
 
     @Mapping(target = "id", ignore = true)

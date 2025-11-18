@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
     Optional<Quiz> findByModuleId(Long moduleId);
+
     List<Quiz> findByModuleCourseId(Long courseId);
 
     @Query("SELECT q FROM Quiz q LEFT JOIN FETCH q.questions WHERE q.id = :id")

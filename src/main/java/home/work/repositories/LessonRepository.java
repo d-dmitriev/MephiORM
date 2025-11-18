@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface LessonRepository extends JpaRepository<Lesson, Long> {
     List<Lesson> findByModuleId(Long moduleId);
+
     List<Lesson> findByModuleIdOrderByOrderIndex(Long moduleId);
 
     @Query("SELECT l FROM Lesson l LEFT JOIN FETCH l.assignments WHERE l.id = :id")
