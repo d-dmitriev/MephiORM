@@ -6,6 +6,9 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Сущность Question, представляющая вопрос в викторине на образовательной платформе.
+ */
 @Entity
 @Table(name = "questions")
 @Data

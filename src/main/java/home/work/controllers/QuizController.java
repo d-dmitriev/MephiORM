@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Контроллер для управления викторинами и вопросами.
+ */
 @RestController
 @RequestMapping("/api/quizzes")
 @RequiredArgsConstructor

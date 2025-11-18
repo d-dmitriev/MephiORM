@@ -7,6 +7,9 @@ import lombok.EqualsAndHashCode;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Сущность User, представляющая пользователя на образовательной платформе.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "users")

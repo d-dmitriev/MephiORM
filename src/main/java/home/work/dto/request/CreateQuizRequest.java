@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+/**
+ * DTO для создания новой викторины
+ */
 @Data
 public class CreateQuizRequest {
     @NotEmpty

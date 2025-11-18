@@ -5,6 +5,9 @@ import home.work.entities.Submission;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * Маппер для сущности Submission и её DTO.
+ */
 @Mapper(componentModel = "spring")
 public interface SubmissionMapper {
     @Mapping(target = "assignmentId", source = "submission.assignment.id")

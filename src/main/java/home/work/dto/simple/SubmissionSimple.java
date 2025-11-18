@@ -2,6 +2,9 @@ package home.work.dto.simple;
 
 import lombok.Data;
 
+/**
+ * Упрощённый DTO для сущности Submission.
+ */
 @Data
 public class SubmissionSimple {
     private Long id;

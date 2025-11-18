@@ -10,6 +10,9 @@ import org.mapstruct.MappingTarget;
 
 import java.time.LocalDateTime;
 
+/**
+ * Маппер для сущности Enrollment и её DTO.
+ */
 @Mapper(componentModel = "spring")
 public interface EnrollmentMapper {
     @Mapping(target = "studentId", source = "enrollment.student.id")

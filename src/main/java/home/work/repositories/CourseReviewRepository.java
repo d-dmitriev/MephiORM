@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Интерфейс репозитория для управления сущностями CourseReview.
+ */
 @Repository
 public interface CourseReviewRepository extends JpaRepository<CourseReview, Long> {
     List<CourseReview> findByCourseId(Long courseId);

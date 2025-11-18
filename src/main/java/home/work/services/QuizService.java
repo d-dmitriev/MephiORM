@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Сервис для управления викторинами (quizzes), вопросами и связанными сущностями.
+ */
 @Service
 @RequiredArgsConstructor
 public class QuizService {

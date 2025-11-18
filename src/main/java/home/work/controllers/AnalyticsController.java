@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+/**
+ * Контроллер для обработки конечных точек, связанных с аналитикой.
+ */
 @RestController
 @RequestMapping("/api/analytics")
 @RequiredArgsConstructor

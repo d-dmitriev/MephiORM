@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Контроллер для управления уроками в модулях курсов.
+ */
 @RestController
 @RequestMapping("/api/lessons")
 @RequiredArgsConstructor

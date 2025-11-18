@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Сервис для управления пользователями и их профилями.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService {

@@ -12,6 +12,9 @@ import home.work.entities.Module;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * Маппер для сущности Quiz и её DTO.
+ */
 @Mapper(componentModel = "spring")
 public interface QuizMapper {
     QuizSimple toSimple(Quiz request);

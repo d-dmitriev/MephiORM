@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+/**
+ * DTO для создания нового вопроса
+ */
 @Data
 public class CreateQuestionRequest {
     @NotEmpty

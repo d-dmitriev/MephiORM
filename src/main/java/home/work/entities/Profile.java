@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * Сущность Profile, представляющая профиль пользователя на образовательной платформе.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "profiles")

@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * Сущность Submission, представляющая сдачу задания студентом на образовательной платформе.
+ */
 @Entity
 @Table(name = "submissions",
         uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "assignment_id"}))

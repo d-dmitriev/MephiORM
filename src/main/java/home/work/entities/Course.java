@@ -10,6 +10,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Сущность Course, представляющая курс на образовательной платформе.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "courses")

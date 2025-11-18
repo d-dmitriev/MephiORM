@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Сервис для формирования аналитики и статистики образовательной платформы.
+ */
 @Service
 @RequiredArgsConstructor
 public class AnalyticsService {

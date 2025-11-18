@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+/**
+ * Контроллер для управления тегами.
+ */
 @RestController
 @RequestMapping("/api/tags")
 @RequiredArgsConstructor

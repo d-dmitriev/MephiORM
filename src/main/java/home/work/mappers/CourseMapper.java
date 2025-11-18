@@ -10,6 +10,9 @@ import home.work.entities.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * Маппер для сущности Course и её DTO.
+ */
 @Mapper(componentModel = "spring")
 public interface CourseMapper {
     CourseSimple toSimple(Course course);

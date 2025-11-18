@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Сервис для управления модулями (modules) и связанными сущностями.
+ */
 @Service
 @RequiredArgsConstructor
 public class ModuleService {

@@ -7,6 +7,9 @@ import home.work.entities.Lesson;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * * Маппер для сущности Assignment и её DTO.
+ */
 @Mapper(componentModel = "spring")
 public interface AssignmentMapper {
     AssignmentSimple toSimple(Assignment assignment);

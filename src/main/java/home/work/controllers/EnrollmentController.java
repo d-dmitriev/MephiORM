@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Контроллер для управления записями о зачислении студентов на курсы.
+ */
 @RestController
 @RequestMapping("/api/enrollments")
 @RequiredArgsConstructor

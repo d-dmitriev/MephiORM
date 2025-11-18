@@ -6,6 +6,9 @@ import lombok.Data;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Сущность Tag, представляющая тег для курсов на образовательной платформе.
+ */
 @Entity
 @Table(name = "tags")
 @Data

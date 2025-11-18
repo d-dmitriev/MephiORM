@@ -6,6 +6,9 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Сущность Lesson, представляющая урок в модуле курса на образовательной платформе.
+ */
 @Entity
 @Table(name = "lessons")
 @Data

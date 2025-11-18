@@ -7,6 +7,9 @@ import home.work.entities.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * Маппер для сущности User и её DTO.
+ */
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     UserSimple toSimple(User user);

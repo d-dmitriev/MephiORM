@@ -3,6 +3,9 @@ package home.work.dto.request;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
+/**
+ * DTO для создания новой категории
+ */
 @Data
 public class CreateCategoryRequest {
     @NotEmpty

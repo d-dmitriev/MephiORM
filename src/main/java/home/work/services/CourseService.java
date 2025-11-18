@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Сервис для управления курсами, модулями, уроками и связанными сущностями.
+ */
 @Service
 @RequiredArgsConstructor
 public class CourseService {

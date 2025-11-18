@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * Упрощённый DTO для сущности CourseReview.
+ */
 @Data
 public class CourseReviewSimple {
     private Long id;

@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Сервис для управления категориями курсов.
+ */
 @Service
 @RequiredArgsConstructor
 public class CategoryService {

@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * Сущность QuizSubmission, представляющая сдачу викторины студентом на образовательной платформе.
+ */
 @Entity
 @Table(name = "quiz_submissions")
 @Data

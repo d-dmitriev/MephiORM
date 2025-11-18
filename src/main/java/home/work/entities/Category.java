@@ -6,6 +6,9 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Сущность Category, представляющая категорию курсов на образовательной платформе.
+ */
 @Entity
 @Table(name = "categories")
 @Data

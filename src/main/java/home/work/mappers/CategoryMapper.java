@@ -9,6 +9,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
+/**
+ * Маппер для сущности Category и её DTO.
+ */
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
     @Mapping(target = "id", ignore = true)

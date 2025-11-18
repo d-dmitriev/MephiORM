@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * DTO ответа для сущности Course.
+ */
 @Data
 @AllArgsConstructor
 public class CourseResponse {

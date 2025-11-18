@@ -10,6 +10,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
+/**
+ * Маппер для сущности Module и её DTO.
+ */
 @Mapper(componentModel = "spring")
 public interface ModuleMapper {
     ModuleSimple toSimple(Module module);

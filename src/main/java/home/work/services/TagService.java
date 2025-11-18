@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Сервис для управления тегами (tags) и связанными сущностями.
+ */
 @Service
 @RequiredArgsConstructor
 public class TagService {

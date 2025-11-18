@@ -3,6 +3,9 @@ package home.work.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * Сущность AnswerOption, представляющая вариант ответа на вопрос в викторине.
+ */
 @Entity
 @Table(name = "answer_options")
 @Data

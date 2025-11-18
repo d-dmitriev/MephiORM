@@ -6,6 +6,9 @@ import home.work.entities.Tag;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * Маппер для сущности Tag и её DTO.
+ */
 @Mapper(componentModel = "spring")
 public interface TagMapper {
     TagSimple toSimple(Tag tag);

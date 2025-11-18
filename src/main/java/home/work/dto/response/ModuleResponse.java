@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DTO ответа для сущности Module с её уроками.
+ */
 @Data
 @RequiredArgsConstructor
 public class ModuleResponse {

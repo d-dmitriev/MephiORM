@@ -10,6 +10,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+/**
+ * Базовый класс сущности с полями для аудита создания и обновления.
+ */
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Data

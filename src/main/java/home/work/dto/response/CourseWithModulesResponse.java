@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DTO ответа для сущности Course с её модулями.
+ */
 @Data
 @RequiredArgsConstructor
 public class CourseWithModulesResponse {

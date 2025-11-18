@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * Сущность Enrollment, представляющая зачисление студента на курс на образовательной платформе.
+ */
 @Entity
 @Table(name = "enrollments",
         uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "course_id"}))

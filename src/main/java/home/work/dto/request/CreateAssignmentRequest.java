@@ -7,6 +7,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * DTO для создания нового задания
+ */
 @Data
 public class CreateAssignmentRequest {
     @NotEmpty

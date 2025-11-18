@@ -2,6 +2,9 @@ package home.work.dto.simple;
 
 import lombok.Data;
 
+/**
+ * Упрощённый DTO для сущности Lesson.
+ */
 @Data
 public class LessonSimple {
     private Long id;

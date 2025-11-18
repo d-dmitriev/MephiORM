@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Сущность Assignment, представляющая задание в уроке на образовательной платформе.
+ */
 @Entity
 @Table(name = "assignments")
 @Data

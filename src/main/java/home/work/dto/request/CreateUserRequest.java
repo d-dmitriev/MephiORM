@@ -4,6 +4,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
+/**
+ * DTO для создания нового пользователя
+ */
 @Data
 public class CreateUserRequest {
     @NotEmpty

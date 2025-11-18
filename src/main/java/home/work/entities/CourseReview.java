@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * Сущность CourseReview, представляющая отзыв студента о курсе на образовательной платформе.
+ */
 @Entity
 @Table(name = "course_reviews",
         uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "course_id"}))
