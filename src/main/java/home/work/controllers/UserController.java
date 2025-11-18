@@ -1,8 +1,17 @@
 package home.work.controllers;
 
+import home.work.dto.composite.UserWithProfile;
 import home.work.dto.request.CreateUserRequest;
 import home.work.dto.request.UpdateUserProfileRequest;
+import home.work.dto.simple.ProfileInfo;
+import home.work.dto.simple.UserSimple;
+import home.work.entities.Enrollment;
+import home.work.entities.Submission;
 import home.work.services.UserService;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +32,7 @@ public class UserController {
      * @param user Данные пользователя
      * @return Созданный пользователь
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserSimple.class)))
     @PostMapping
     public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserRequest user) {
         return ResponseEntity.ok(userService.createUser(user));
@@ -34,6 +44,7 @@ public class UserController {
      * @param id Идентификатор пользователя
      * @return Пользователь
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserWithProfile.class)))
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
@@ -45,6 +56,7 @@ public class UserController {
      * @param email Email пользователя
      * @return Пользователь
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserSimple.class)))
     @GetMapping("/email/{email}")
     public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
         return ResponseEntity.ok(userService.getUserByEmail(email));
@@ -56,6 +68,7 @@ public class UserController {
      * @param id Идентификатор пользователя
      * @return Профиль пользователя
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProfileInfo.class)))
     @GetMapping("/{id}/profile")
     public ResponseEntity<?> getUserProfile(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserProfile(id));
@@ -68,6 +81,7 @@ public class UserController {
      * @param profileDetails Обновленные данные профиля
      * @return Обновленный профиль пользователя
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProfileInfo.class)))
     @PutMapping("/{id}/profile")
     public ResponseEntity<?> updateUserProfile(
             @PathVariable Long id,
@@ -80,6 +94,7 @@ public class UserController {
      *
      * @return Список учителей
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserSimple.class))))
     @GetMapping("/teachers")
     public ResponseEntity<?> getTeachers() {
         return ResponseEntity.ok(userService.getTeachers());
@@ -90,6 +105,7 @@ public class UserController {
      *
      * @return Список студентов
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserSimple.class))))
     @GetMapping("/students")
     public ResponseEntity<?> getStudents() {
         return ResponseEntity.ok(userService.getStudents());
@@ -101,6 +117,7 @@ public class UserController {
      * @param id Идентификатор пользователя
      * @return Список курсов
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Enrollment.class))))
     @GetMapping("/{id}/enrollments")
     public ResponseEntity<?> getUserEnrollments(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserEnrollments(id));
@@ -112,6 +129,7 @@ public class UserController {
      * @param id Идентификатор пользователя
      * @return Список отправленных заданий
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Submission.class))))
     @GetMapping("/{id}/submissions")
     public ResponseEntity<?> getUserSubmissions(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserSubmissions(id));
@@ -123,8 +141,9 @@ public class UserController {
      * @param id Идентификатор пользователя
      * @return Ответ об успешном удалении
      */
+    @ApiResponse(responseCode = "204", description = "No content")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

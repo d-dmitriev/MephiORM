@@ -1,6 +1,11 @@
 package home.work.controllers;
 
+import home.work.dto.simple.EnrollmentSimple;
 import home.work.services.EnrollmentService;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +26,7 @@ public class EnrollmentController {
      * @param studentId Идентификатор студента
      * @return Информация о зачислении
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = EnrollmentSimple.class)))
     @PostMapping
     public ResponseEntity<?> enrollStudent(
             @RequestParam Long courseId,
@@ -35,8 +41,9 @@ public class EnrollmentController {
      * @param studentId Идентификатор студента
      * @return Пустой ответ
      */
+    @ApiResponse(responseCode = "204", description = "No content")
     @DeleteMapping
-    public ResponseEntity<?> unenrollStudent(
+    public ResponseEntity<Void> unenrollStudent(
             @RequestParam Long courseId,
             @RequestParam Long studentId) {
         enrollmentService.unenrollStudentFromCourse(courseId, studentId);
@@ -50,6 +57,7 @@ public class EnrollmentController {
      * @param status       Новый статус
      * @return Обновленная информация о зачислении
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = EnrollmentSimple.class)))
     @PutMapping("/{enrollmentId}/status")
     public ResponseEntity<?> updateEnrollmentStatus(
             @PathVariable Long enrollmentId,
@@ -64,6 +72,7 @@ public class EnrollmentController {
      * @param progress     Новый прогресс (в процентах)
      * @return Обновленная информация о зачислении
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = EnrollmentSimple.class)))
     @PutMapping("/{enrollmentId}/progress")
     public ResponseEntity<?> updateEnrollmentProgress(
             @PathVariable Long enrollmentId,
@@ -77,6 +86,7 @@ public class EnrollmentController {
      * @param courseId Идентификатор курса
      * @return Список зачислений
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = EnrollmentSimple.class))))
     @GetMapping("/course/{courseId}")
     public ResponseEntity<?> getCourseEnrollments(@PathVariable Long courseId) {
         return ResponseEntity.ok(enrollmentService.getCourseEnrollments(courseId));
@@ -88,6 +98,7 @@ public class EnrollmentController {
      * @param studentId Идентификатор студента
      * @return Список зачислений
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = EnrollmentSimple.class))))
     @GetMapping("/student/{studentId}")
     public ResponseEntity<?> getStudentEnrollments(@PathVariable Long studentId) {
         return ResponseEntity.ok(enrollmentService.getStudentEnrollments(studentId));
@@ -100,6 +111,7 @@ public class EnrollmentController {
      * @param courseId  Идентификатор курса
      * @return Прогресс студента на курсе
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Double.class)))
     @GetMapping("/progress")
     public ResponseEntity<?> calculateStudentProgress(
             @RequestParam Long studentId,

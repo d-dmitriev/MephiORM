@@ -1,7 +1,13 @@
 package home.work.controllers;
 
 import home.work.dto.request.CreateTagRequest;
+import home.work.dto.simple.CourseSimple;
+import home.work.dto.simple.TagSimple;
 import home.work.services.TagService;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +30,7 @@ public class TagController {
      * @param tag данные для создания тега
      * @return созданный тег
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TagSimple.class)))
     @PostMapping
     public ResponseEntity<?> createTag(@Valid @RequestBody CreateTagRequest tag) {
         return ResponseEntity.ok(tagService.createTag(tag));
@@ -34,6 +41,7 @@ public class TagController {
      *
      * @return список всех тегов
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TagSimple.class))))
     @GetMapping
     public ResponseEntity<?> getAllTags() {
         return ResponseEntity.ok(tagService.getAllTags());
@@ -45,6 +53,7 @@ public class TagController {
      * @param id идентификатор тега
      * @return тег с указанным идентификатором
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TagSimple.class)))
     @GetMapping("/{id}")
     public ResponseEntity<?> getTag(@PathVariable Long id) {
         return ResponseEntity.ok(tagService.getTagById(id));
@@ -56,6 +65,7 @@ public class TagController {
      * @param query поисковый запрос
      * @return список тегов, соответствующих запросу
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TagSimple.class))))
     @GetMapping("/search")
     public ResponseEntity<?> searchTags(@RequestParam String query) {
         return ResponseEntity.ok(tagService.searchTags(query));
@@ -68,8 +78,9 @@ public class TagController {
      * @param tagIds   идентификаторы тегов для добавления
      * @return ответ без содержимого
      */
+    @ApiResponse(responseCode = "204", description = "No content")
     @PostMapping("/courses/{courseId}/multiple")
-    public ResponseEntity<?> addTagsToCourse(
+    public ResponseEntity<Void> addTagsToCourse(
             @PathVariable Long courseId,
             @RequestBody Set<Long> tagIds) {
         tagService.addTagsToCourse(courseId, tagIds);
@@ -83,8 +94,9 @@ public class TagController {
      * @param courseId идентификатор курса
      * @return ответ без содержимого
      */
+    @ApiResponse(responseCode = "204", description = "No content")
     @DeleteMapping("/{tagId}/courses/{courseId}")
-    public ResponseEntity<?> removeTagFromCourse(
+    public ResponseEntity<Void> removeTagFromCourse(
             @PathVariable Long tagId,
             @PathVariable Long courseId) {
         tagService.removeTagFromCourse(courseId, tagId);
@@ -97,6 +109,7 @@ public class TagController {
      * @param courseId идентификатор курса
      * @return список тегов курса
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TagSimple.class))))
     @GetMapping("/courses/{courseId}")
     public ResponseEntity<?> getCourseTags(@PathVariable Long courseId) {
         return ResponseEntity.ok(tagService.getCourseTags(courseId));
@@ -108,6 +121,7 @@ public class TagController {
      * @param tagId идентификатор тега
      * @return список курсов с данным тегом
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CourseSimple.class))))
     @GetMapping("/{tagId}/courses")
     public ResponseEntity<?> getTagCourses(@PathVariable Long tagId) {
         return ResponseEntity.ok(tagService.getCoursesByTag(tagId));
@@ -119,8 +133,9 @@ public class TagController {
      * @param id идентификатор тега
      * @return ответ без содержимого
      */
+    @ApiResponse(responseCode = "204", description = "No content")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTag(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTag(@PathVariable Long id) {
         tagService.deleteTag(id);
         return ResponseEntity.noContent().build();
     }
@@ -130,6 +145,7 @@ public class TagController {
      *
      * @return список популярных тегов с их счетчиками
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(type = "object", example = "[[\"Python\",1],[\"Hibernate\",1],[\"Java\",1]]")))
     @GetMapping("/popular")
     public ResponseEntity<?> getPopularTags() {
         return ResponseEntity.ok(tagService.getPopularTagsWithCounts());

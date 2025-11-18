@@ -2,7 +2,12 @@ package home.work.controllers;
 
 import home.work.dto.request.CreateModuleRequest;
 import home.work.dto.request.UpdateModuleRequest;
+import home.work.dto.simple.ModuleSimple;
 import home.work.services.ModuleService;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +30,7 @@ public class ModuleController {
      * @param module Данные модуля
      * @return Созданный модуль
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModuleSimple.class)))
     @PostMapping
     public ResponseEntity<?> createModule(
             @Valid @RequestBody CreateModuleRequest module) {
@@ -37,6 +43,7 @@ public class ModuleController {
      * @param id Идентификатор модуля
      * @return Модуль с уроками
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModuleSimple.class)))
     @GetMapping("/{id}")
     public ResponseEntity<?> getModule(@PathVariable Long id) {
         return ResponseEntity.ok(moduleService.getModuleWithLessons(id));
@@ -49,6 +56,7 @@ public class ModuleController {
      * @param moduleDetails Обновленные данные модуля
      * @return Обновленный модуль
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModuleSimple.class)))
     @PutMapping("/{id}")
     public ResponseEntity<?> updateModule(
             @PathVariable Long id,
@@ -62,6 +70,7 @@ public class ModuleController {
      * @param courseId Идентификатор курса
      * @return Список модулей
      */
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ModuleSimple.class))))
     @GetMapping("/course/{courseId}")
     public ResponseEntity<?> getCourseModules(@PathVariable Long courseId) {
         return ResponseEntity.ok(moduleService.getCourseModules(courseId));
@@ -73,8 +82,9 @@ public class ModuleController {
      * @param id Идентификатор модуля
      * @return Ответ об успешном удалении
      */
+    @ApiResponse(responseCode = "204", description = "No content")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteModule(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteModule(@PathVariable Long id) {
         moduleService.deleteModule(id);
         return ResponseEntity.noContent().build();
     }
@@ -86,8 +96,9 @@ public class ModuleController {
      * @param moduleIds Новый порядок идентификаторов модулей
      * @return Ответ об успешном переупорядочивании
      */
+    @ApiResponse(responseCode = "204", description = "No content")
     @PutMapping("/course/{courseId}/reorder")
-    public ResponseEntity<?> reorderModules(
+    public ResponseEntity<Void> reorderModules(
             @PathVariable Long courseId,
             @RequestBody List<Long> moduleIds) {
         moduleService.reorderModules(courseId, moduleIds);
