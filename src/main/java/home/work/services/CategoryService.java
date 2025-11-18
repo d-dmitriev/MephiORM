@@ -79,7 +79,7 @@ public class CategoryService {
     @Transactional
     public void deleteCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));;
+                .orElseThrow(() -> new RuntimeException("Category not found"));
 
         // Check if category has courses
         if (!category.getCourses().isEmpty()) {
@@ -91,7 +91,7 @@ public class CategoryService {
 
     public Long getCourseCountByCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));;
+                .orElseThrow(() -> new RuntimeException("Category not found"));
         return (long) category.getCourses().size();
     }
 

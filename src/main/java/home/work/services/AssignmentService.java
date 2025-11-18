@@ -36,7 +36,7 @@ public class AssignmentService {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new RuntimeException("Lesson not found"));
 
-        Assignment assignmentCreated = assignmentRepository.save(assignmentMapper.toEntity(assignment,lesson));
+        Assignment assignmentCreated = assignmentRepository.save(assignmentMapper.toEntity(assignment, lesson));
         return assignmentMapper.toSimple(assignmentCreated);
     }
 

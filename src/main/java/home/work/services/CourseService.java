@@ -1,19 +1,14 @@
 package home.work.services;
 
+import home.work.dto.request.CreateCourseRequest;
 import home.work.dto.response.CourseResponse;
 import home.work.dto.response.CourseWithModulesResponse;
 import home.work.dto.response.ModuleResponse;
-import home.work.dto.request.CreateCourseRequest;
 import home.work.dto.simple.CourseReviewSimple;
 import home.work.dto.simple.CourseSimple;
 import home.work.dto.simple.EnrollmentSimple;
-import home.work.entities.Category;
-import home.work.entities.Course;
-import home.work.entities.CourseReview;
-import home.work.entities.Enrollment;
-import home.work.entities.Lesson;
+import home.work.entities.*;
 import home.work.entities.Module;
-import home.work.entities.User;
 import home.work.mappers.CourseMapper;
 import home.work.mappers.EnrollmentMapper;
 import home.work.repositories.*;

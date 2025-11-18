@@ -66,7 +66,7 @@ public class TagService {
             throw new RuntimeException("Some tags not found");
         }
 
-        for (Tag tag: existingTags)
+        for (Tag tag : existingTags)
             courseRepository.addTagsToCourseWithClear(courseId, tag.getId());
     }
 
@@ -74,7 +74,7 @@ public class TagService {
     public void removeTagFromCourse(Long courseId, Long tagId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
-        Tag tag =  tagRepository.findById(tagId)
+        Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new RuntimeException("Tag not found"));
 
         courseRepository.removeTagFromCourse(courseId, tagId);
@@ -94,7 +94,7 @@ public class TagService {
 
     @Transactional
     public void deleteTag(Long tagId) {
-        Tag tag =  tagRepository.findById(tagId)
+        Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new RuntimeException("Tag not found"));
 
         // Remove tag from all courses

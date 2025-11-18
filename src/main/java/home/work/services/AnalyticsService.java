@@ -82,19 +82,22 @@ public class AnalyticsService {
             Long totalTeachers,
             Long totalEnrollments,
             Long totalSubmissions
-    ) {}
+    ) {
+    }
 
     public record CourseStatistics(
             Long enrollmentCount,
             Long assignmentCount,
             Double averageRating,
             Long reviewCount
-    ) {}
+    ) {
+    }
 
     public record StudentProgress(
             Double progress,
             Long submittedAssignments,
             Long completedQuizzes,
             Double averageScore
-    ) {}
+    ) {
+    }
 }

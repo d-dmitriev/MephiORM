@@ -98,8 +98,8 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long userId) {
-        User user =  userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));;
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
         // Проверяем можно ли удалить пользователя
         if (user.getRole() == UserRole.TEACHER && !user.getCoursesTaught().isEmpty()) {
