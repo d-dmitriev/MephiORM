@@ -27,6 +27,13 @@ public class EnrollmentService {
 
     private final EnrollmentMapper enrollmentMapper;
 
+    /**
+     * Запись студента на курс.
+     *
+     * @param courseId  идентификатор курса
+     * @param studentId идентификатор студента
+     * @return информация о записи в упрощенном виде
+     */
     @Transactional
     public EnrollmentSimple enrollStudentInCourse(Long courseId, Long studentId) {
         if (enrollmentRepository.existsByStudentIdAndCourseId(studentId, courseId)) {
@@ -51,6 +58,12 @@ public class EnrollmentService {
         return enrollmentMapper.toSimple(enrollmentRepository.save(enrollment));
     }
 
+    /**
+     * Отмена записи студента с курса.
+     *
+     * @param courseId  идентификатор курса
+     * @param studentId идентификатор студента
+     */
     @Transactional
     public void unenrollStudentFromCourse(Long courseId, Long studentId) {
         Enrollment enrollment = enrollmentRepository.findByStudentIdAndCourseId(studentId, courseId)
@@ -59,6 +72,13 @@ public class EnrollmentService {
         enrollmentRepository.delete(enrollment);
     }
 
+    /**
+     * Обновление статуса записи на курс.
+     *
+     * @param enrollmentId идентификатор записи
+     * @param status       новый статус записи
+     * @return обновленная информация о записи в упрощенном виде
+     */
     @Transactional
     public EnrollmentSimple updateEnrollmentStatus(Long enrollmentId, String status) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
@@ -68,6 +88,13 @@ public class EnrollmentService {
         return enrollmentMapper.toSimple(enrollmentRepository.save(enrollment));
     }
 
+    /**
+     * Обновление прогресса студента в курсе.
+     *
+     * @param enrollmentId идентификатор записи
+     * @param progress     новый прогресс (от 0.0 до 1.0)
+     * @return обновленная информация о записи в упрощенном виде
+     */
     @Transactional
     public EnrollmentSimple updateEnrollmentProgress(Long enrollmentId, Double progress) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
@@ -82,19 +109,45 @@ public class EnrollmentService {
         return enrollmentMapper.toSimple(enrollmentRepository.save(enrollment));
     }
 
+    /**
+     * Получение всех записей на курс.
+     *
+     * @param courseId идентификатор курса
+     * @return список записей в упрощенном виде
+     */
     public List<EnrollmentSimple> getCourseEnrollments(Long courseId) {
         return enrollmentRepository.findByCourseId(courseId).stream().map(enrollmentMapper::toSimple).toList();
     }
 
+    /**
+     * Получение всех записей студента.
+     *
+     * @param studentId идентификатор студента
+     * @return список записей в упрощенном виде
+     */
     public List<EnrollmentSimple> getStudentEnrollments(Long studentId) {
         return enrollmentRepository.findByStudentId(studentId).stream().map(enrollmentMapper::toSimple).toList();
     }
 
+    /**
+     * Получение конкретной записи студента на курс.
+     *
+     * @param studentId идентификатор студента
+     * @param courseId  идентификатор курса
+     * @return информация о записи в упрощенном виде
+     */
     public EnrollmentSimple getEnrollment(Long studentId, Long courseId) {
         return enrollmentRepository.findByStudentIdAndCourseId(studentId, courseId).map(enrollmentMapper::toSimple)
                 .orElseThrow(() -> new RuntimeException("Enrollment not found"));
     }
 
+    /**
+     * Вычисление прогресса студента по конкретному курсу.
+     *
+     * @param studentId идентификатор студента
+     * @param courseId  идентификатор курса
+     * @return прогресс студента в виде числа от 0.0 до 1.0
+     */
     public Double calculateStudentProgress(Long studentId, Long courseId) {
         // Попробуем получить enrollment; если его нет — возвращаем 0.0 вместо бросания исключения,
         var enrollmentOpt = enrollmentRepository.findByStudentIdAndCourseId(studentId, courseId);

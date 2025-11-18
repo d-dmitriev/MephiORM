@@ -34,6 +34,12 @@ public class AssignmentService {
     private final AssignmentMapper assignmentMapper;
     private final SubmissionMapper submissionMapper;
 
+    /**
+     * Создание нового задания.
+     *
+     * @param assignment данные для создания задания
+     * @return созданное задание в упрощенном виде
+     */
     @Transactional
     public AssignmentSimple createAssignment(CreateAssignmentRequest assignment) {
         Lesson lesson = lessonRepository.findById(assignment.getLessonId())
@@ -43,6 +49,14 @@ public class AssignmentService {
         return assignmentMapper.toSimple(assignmentCreated);
     }
 
+    /**
+     * Отправка задания студентом.
+     *
+     * @param assignmentId идентификатор задания
+     * @param studentId    идентификатор студента
+     * @param content      содержимое задания
+     * @return отправленное задание в упрощенном виде
+     */
     @Transactional
     public SubmissionSimple submitAssignment(Long assignmentId, Long studentId, String content) {
         if (submissionRepository.findByStudentIdAndAssignmentId(studentId, assignmentId).isPresent()) {
@@ -62,6 +76,14 @@ public class AssignmentService {
         return submissionMapper.toSimple(submissionRepository.save(submission));
     }
 
+    /**
+     * Оценка отправленного задания.
+     *
+     * @param submissionId идентификатор отправленного задания
+     * @param score        оценка
+     * @param feedback     обратная связь
+     * @return оцененное задание в упрощенном виде
+     */
     @Transactional
     public SubmissionSimple gradeSubmission(Long submissionId, Integer score, String feedback) {
         Submission submission = submissionRepository.findById(submissionId)
@@ -73,22 +95,52 @@ public class AssignmentService {
         return submissionMapper.toSimple(submissionRepository.save(submission));
     }
 
+    /**
+     * Получение всех отправленных заданий для конкретного задания.
+     *
+     * @param assignmentId идентификатор задания
+     * @return список отправленных заданий в упрощенном виде
+     */
     public List<SubmissionSimple> getSubmissionsForAssignment(Long assignmentId) {
         return submissionRepository.findByAssignmentIdWithDetails(assignmentId).stream().map(submissionMapper::toSimple).toList();
     }
 
+    /**
+     * Получение всех отправленных заданий конкретного студента.
+     *
+     * @param studentId идентификатор студента
+     * @return список отправленных заданий в упрощенном виде
+     */
     public List<SubmissionSimple> getStudentSubmissions(Long studentId) {
         return submissionRepository.findByStudentIdWithDetails(studentId).stream().map(submissionMapper::toSimple).toList();
     }
 
+    /**
+     * Получение всех просроченных заданий для конкретного курса.
+     *
+     * @param courseId идентификатор курса
+     * @return список просроченных заданий в упрощенном виде
+     */
     public List<AssignmentSimple> getOverdueAssignments(Long courseId) {
         return assignmentRepository.findOverdueAssignments(LocalDateTime.now(), courseId).stream().map(assignmentMapper::toSimple).toList();
     }
 
+    /**
+     * Получение всех заданий для конкретного урока.
+     *
+     * @param lessonId идентификатор урока
+     * @return список заданий в упрощенном виде
+     */
     public List<AssignmentSimple> getByLessonId(Long lessonId) {
         return assignmentRepository.findByLessonId(lessonId).stream().map(assignmentMapper::toSimple).toList();
     }
 
+    /**
+     * Получение задания по его идентификатору вместе с отправленными заданиями.
+     *
+     * @param courseId идентификатор задания
+     * @return задание в упрощенном виде
+     */
     public AssignmentSimple getByIdWithSubmissions(Long courseId) {
         return assignmentRepository.findByIdWithSubmissions(courseId).map(assignmentMapper::toSimple)
                 .orElseThrow(() -> new RuntimeException("Assignment not found"));

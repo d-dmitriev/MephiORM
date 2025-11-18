@@ -28,6 +28,12 @@ public class TagService {
     private final CourseMapper courseMapper;
     private final TagMapper tagMapper;
 
+    /**
+     * Создание нового тега.
+     *
+     * @param request данные для создания тега
+     * @return созданный тег в упрощенном виде
+     */
     @Transactional
     public TagSimple createTag(CreateTagRequest request) {
         if (tagRepository.findByName(request.getName()).isPresent()) {
@@ -37,19 +43,42 @@ public class TagService {
         return tagMapper.toSimple(tagRepository.save(tag));
     }
 
+    /**
+     * Получение тега по идентификатору.
+     *
+     * @param tagId идентификатор тега
+     * @return тег в упрощенном виде
+     */
     public TagSimple getTagById(Long tagId) {
         return tagRepository.findById(tagId).map(tagMapper::toSimple)
                 .orElseThrow(() -> new RuntimeException("Tag not found"));
     }
 
+    /**
+     * Получение всех тегов.
+     *
+     * @return список всех тегов в упрощенном виде
+     */
     public List<TagSimple> getAllTags() {
         return tagRepository.findAll().stream().map(tagMapper::toSimple).toList();
     }
 
+    /**
+     * Поиск тегов по имени.
+     *
+     * @param query строка поиска
+     * @return список найденных тегов в упрощенном виде
+     */
     public List<TagSimple> searchTags(String query) {
         return tagRepository.findByNameContainingIgnoreCase(query).stream().map(tagMapper::toSimple).toList();
     }
 
+    /**
+     * Добавление тегов к курсу.
+     *
+     * @param courseId идентификатор курса
+     * @param tagIds   набор идентификаторов тегов
+     */
     @Transactional
     public void addTagsToCourse(Long courseId, Set<Long> tagIds) {
         if (!courseRepository.existsById(courseId)) {
@@ -65,6 +94,12 @@ public class TagService {
             courseRepository.addTagsToCourseWithClear(courseId, tag.getId());
     }
 
+    /**
+     * Удаление тега из курса.
+     *
+     * @param courseId идентификатор курса
+     * @param tagId    идентификатор тега
+     */
     @Transactional
     public void removeTagFromCourse(Long courseId, Long tagId) {
         Course course = courseRepository.findById(courseId)
@@ -75,14 +110,31 @@ public class TagService {
         courseRepository.removeTagFromCourse(courseId, tagId);
     }
 
+    /**
+     * Получение всех тегов курса.
+     *
+     * @param courseId идентификатор курса
+     * @return список тегов в упрощенном виде
+     */
     public List<TagSimple> getCourseTags(Long courseId) {
         return tagRepository.findByCourseId(courseId).stream().map(tagMapper::toSimple).toList();
     }
 
+    /**
+     * Получение всех курсов с заданным тегом.
+     *
+     * @param tagId идентификатор тега
+     * @return список курсов в упрощенном виде
+     */
     public List<CourseSimple> getCoursesByTag(Long tagId) {
         return courseRepository.findByTagId(tagId).stream().map(courseMapper::toSimple).toList();
     }
 
+    /**
+     * Удаление тега.
+     *
+     * @param tagId идентификатор тега
+     */
     @Transactional
     public void deleteTag(Long tagId) {
         Tag tag = tagRepository.findById(tagId)
@@ -97,6 +149,11 @@ public class TagService {
         tagRepository.delete(tag);
     }
 
+    /**
+     * Получение популярных тегов вместе с количеством курсов, связанных с каждым тегом.
+     *
+     * @return список массивов объектов, где каждый массив содержит тег и количество связанных курсов
+     */
     public List<Object[]> getPopularTagsWithCounts() {
         return tagRepository.findPopularTagsWithCourseCount();
     }

@@ -1,5 +1,8 @@
 package home.work.services;
 
+import home.work.dto.response.CourseStatistics;
+import home.work.dto.response.PlatformStatistics;
+import home.work.dto.response.StudentProgress;
 import home.work.entities.Enrollment;
 import home.work.entities.Submission;
 import home.work.entities.UserRole;
@@ -24,6 +27,11 @@ public class AnalyticsService {
     private final QuizSubmissionRepository quizSubmissionRepository;
     private final CourseReviewRepository courseReviewRepository;
 
+    /**
+     * Получение общей статистики платформы.
+     *
+     * @return объект PlatformStatistics с общей статистикой
+     */
     public PlatformStatistics getPlatformStatistics() {
         Long totalCourses = courseRepository.count();
         Long totalStudents = (long) userRepository.findByRole(UserRole.STUDENT).size();
@@ -34,6 +42,12 @@ public class AnalyticsService {
         return new PlatformStatistics(totalCourses, totalStudents, totalTeachers, totalEnrollments, totalSubmissions);
     }
 
+    /**
+     * Получение статистики по конкретному курсу.
+     *
+     * @param courseId идентификатор курса
+     * @return объект CourseStatistics с статистикой по курсу
+     */
     public CourseStatistics getCourseStatistics(Long courseId) {
         Long enrollmentCount = enrollmentRepository.countByCourseId(courseId);
         Long assignmentCount = submissionRepository.countByCourseId(courseId);
@@ -43,6 +57,13 @@ public class AnalyticsService {
         return new CourseStatistics(enrollmentCount, assignmentCount, averageRating, reviewCount);
     }
 
+    /**
+     * Получение прогресса студента по конкретному курсу.
+     *
+     * @param studentId идентификатор студента
+     * @param courseId  идентификатор курса
+     * @return объект StudentProgress с прогрессом студента
+     */
     public StudentProgress getStudentProgress(Long studentId, Long courseId) {
         Double progress = enrollmentRepository.findByStudentIdAndCourseId(studentId, courseId)
                 .map(Enrollment::getProgress)
@@ -55,6 +76,13 @@ public class AnalyticsService {
         return new StudentProgress(progress, submittedAssignments, completedQuizzes, averageScore);
     }
 
+    /**
+     * Вычисление среднего балла пользователя по курсу.
+     *
+     * @param studentId идентификатор студента
+     * @param courseId  идентификатор курса
+     * @return средний балл
+     */
     private Double getUserAverageScore(Long studentId, Long courseId) {
         List<Submission> submissions = submissionRepository.findByStudentIdAndAssignmentLessonModuleCourseId(studentId, courseId);
         if (submissions.isEmpty()) {
@@ -68,6 +96,11 @@ public class AnalyticsService {
                 .orElse(0.0);
     }
 
+    /**
+     * Получение тренда по количеству новых регистраций на платформе.
+     *
+     * @return карта с датами и количеством регистраций
+     */
     public Map<String, Long> getEnrollmentTrend() {
         // This would typically query enrollments by date
         // Simplified version for demonstration
@@ -76,31 +109,5 @@ public class AnalyticsService {
                         e -> e.getEnrollDate().toLocalDate().toString(),
                         Collectors.counting()
                 ));
-    }
-
-    // DTO classes for analytics
-    public record PlatformStatistics(
-            Long totalCourses,
-            Long totalStudents,
-            Long totalTeachers,
-            Long totalEnrollments,
-            Long totalSubmissions
-    ) {
-    }
-
-    public record CourseStatistics(
-            Long enrollmentCount,
-            Long assignmentCount,
-            Double averageRating,
-            Long reviewCount
-    ) {
-    }
-
-    public record StudentProgress(
-            Double progress,
-            Long submittedAssignments,
-            Long completedQuizzes,
-            Double averageScore
-    ) {
     }
 }

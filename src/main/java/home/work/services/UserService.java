@@ -31,6 +31,12 @@ public class UserService {
     private final UserMapper userMapper;
     private final ProfileMapper profileMapper;
 
+    /**
+     * Создает нового пользователя.
+     *
+     * @param user данные для создания пользователя
+     * @return созданный пользователь в упрощенном виде
+     */
     @Transactional
     public UserSimple createUser(CreateUserRequest user) {
         if (userRepository.existsByEmail(user.getEmail())) {
@@ -40,21 +46,46 @@ public class UserService {
         return userMapper.toSimple(createdUser);
     }
 
+    /**
+     * Получает пользователя по его идентификатору вместе с профилем.
+     *
+     * @param userId идентификатор пользователя
+     * @return пользователь с профилем
+     */
     public UserWithProfile getUserById(Long userId) {
         return userRepository.findByIdWithProfile(userId).map(userMapper::toFull)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
     }
 
+    /**
+     * Получает пользователя по его email.
+     *
+     * @param email email пользователя
+     * @return пользователь в упрощенном виде
+     */
     public UserSimple getUserByEmail(String email) {
         return userRepository.findByEmail(email).map(userMapper::toSimple)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
 
+    /**
+     * Получает профиль пользователя по его идентификатору.
+     *
+     * @param userId идентификатор пользователя
+     * @return информация о профиле пользователя
+     */
     public ProfileInfo getUserProfile(Long userId) {
         return profileRepository.findByUserId(userId).map(profileMapper::toInfo)
                 .orElseThrow(() -> new RuntimeException("Profile not found for user id: " + userId));
     }
 
+    /**
+     * Обновляет профиль пользователя.
+     *
+     * @param userId         идентификатор пользователя
+     * @param profileDetails данные для обновления профиля
+     * @return обновленная информация о профиле пользователя
+     */
     @Transactional
     public ProfileInfo updateUserProfile(Long userId, UpdateUserProfileRequest profileDetails) {
         Profile profile = profileRepository.findByUserId(userId)
@@ -64,22 +95,49 @@ public class UserService {
         return profileMapper.toInfo(profileRepository.save(profile));
     }
 
+    /**
+     * Получает список всех преподавателей.
+     *
+     * @return список преподавателей в упрощенном виде
+     */
     public List<UserSimple> getTeachers() {
         return userRepository.findByRole(UserRole.TEACHER).stream().map(userMapper::toSimple).toList();
     }
 
+    /**
+     * Получает список всех студентов.
+     *
+     * @return список студентов в упрощенном виде
+     */
     public List<UserSimple> getStudents() {
         return userRepository.findByRole(UserRole.STUDENT).stream().map(userMapper::toSimple).toList();
     }
 
+    /**
+     * Получает список всех записей пользователя на курсы.
+     *
+     * @param userId идентификатор пользователя
+     * @return список записей на курсы
+     */
     public List<Enrollment> getUserEnrollments(Long userId) {
         return enrollmentRepository.findByStudentId(userId);
     }
 
+    /**
+     * Получает список всех отправленных пользователем заданий.
+     *
+     * @param userId идентификатор пользователя
+     * @return список отправленных заданий
+     */
     public List<Submission> getUserSubmissions(Long userId) {
         return submissionRepository.findByStudentIdWithDetails(userId);
     }
 
+    /**
+     * Удаляет пользователя по его идентификатору.
+     *
+     * @param userId идентификатор пользователя
+     */
     @Transactional
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
@@ -96,6 +154,13 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    /**
+     * Проверяет, записан ли пользователь на определенный курс.
+     *
+     * @param userId   идентификатор пользователя
+     * @param courseId идентификатор курса
+     * @return true, если пользователь записан на курс, иначе false
+     */
     public boolean isUserEnrolledInCourse(Long userId, Long courseId) {
         return enrollmentRepository.existsByStudentIdAndCourseId(userId, courseId);
     }

@@ -32,6 +32,12 @@ public class CourseService {
     private final CourseMapper courseMapper;
     private final EnrollmentMapper enrollmentMapper;
 
+    /**
+     * Создание нового курса.
+     *
+     * @param course данные для создания курса
+     * @return созданный курс в упрощенном виде
+     */
     @Transactional
     public CourseSimple createCourse(CreateCourseRequest course) {
         User teacher = userRepository.findById(course.getTeacherId())
@@ -42,6 +48,13 @@ public class CourseService {
         return courseMapper.toSimple(courseRepository.save(courseMapper.toEntity(course, teacher, category)));
     }
 
+    /**
+     * Запись студента на курс.
+     *
+     * @param courseId  идентификатор курса
+     * @param studentId идентификатор студента
+     * @return информация о записи в упрощенном виде
+     */
     @Transactional
     public EnrollmentSimple enrollStudent(Long courseId, Long studentId) {
         if (enrollmentRepository.existsByStudentIdAndCourseId(studentId, courseId)) {
@@ -60,20 +73,45 @@ public class CourseService {
         return enrollmentMapper.toSimple(enrollmentRepository.save(enrollment));
     }
 
+    /**
+     * Получение информации о курсе без модулей.
+     *
+     * @param courseId идентификатор курса
+     * @return информация о курсе
+     */
+    @Transactional
     public CourseResponse getCourseWithLazyModules(Long courseId) {
         return getCourseDTO(courseId);
     }
 
+    /**
+     * Получение отзывов о курсе вместе с информацией о студентах.
+     *
+     * @param courseId идентификатор курса
+     * @return список отзывов в упрощенном виде
+     */
     @Transactional
     public List<CourseReviewSimple> getCourseReviewWithStudent(Long courseId) {
         return courseReviewRepository.findByCourseIdWithStudent(courseId).stream().map(courseMapper::toSimple).toList();
     }
 
+    /**
+     * Получение полной структуры курса с модулями.
+     *
+     * @param courseId идентификатор курса
+     * @return информация о курсе с модулями
+     */
     @Transactional
     public CourseWithModulesResponse getCourseFullStructure(Long courseId) {
         return getCourseWithModulesDTO(courseId);
     }
 
+    /**
+     * Получение информации о курсе.
+     *
+     * @param courseId идентификатор курса
+     * @return информация о курсе
+     */
     @Transactional
     public CourseResponse getCourseDTO(Long courseId) {
         Course course = courseRepository.findByIdWithTeacherAndCategory(courseId)
@@ -93,6 +131,12 @@ public class CourseService {
         );
     }
 
+    /**
+     * Получение информации о курсе вместе с его модулями.
+     *
+     * @param courseId идентификатор курса
+     * @return информация о курсе с модулями
+     */
     @Transactional
     public CourseWithModulesResponse getCourseWithModulesDTO(Long courseId) {
         Course course = courseRepository.findByIdWithModules(courseId)
@@ -124,18 +168,44 @@ public class CourseService {
         return dto;
     }
 
+    /**
+     * Получение всех курсов.
+     *
+     * @return список всех курсов в упрощенном виде
+     */
     public List<CourseSimple> getAllCourses() {
         return courseRepository.findAll().stream().map(courseMapper::toSimple).toList();
     }
 
+    /**
+     * Получение курсов по имени категории.
+     *
+     * @param categoryName имя категории
+     * @return список курсов в упрощенном виде
+     */
     public List<CourseSimple> getCoursesByCategory(String categoryName) {
         return courseRepository.findByCategoryName(categoryName).stream().map(courseMapper::toSimple).toList();
     }
 
+    /**
+     * Получение курсов по имени тега.
+     *
+     * @param tagName имя тега
+     * @return список курсов в упрощенном виде
+     */
     public List<CourseSimple> getCoursesByTag(String tagName) {
         return courseRepository.findByTagName(tagName).stream().map(courseMapper::toSimple).toList();
     }
 
+    /**
+     * Добавление отзыва к курсу.
+     *
+     * @param courseId  идентификатор курса
+     * @param studentId идентификатор студента
+     * @param rating    рейтинг
+     * @param comment   комментарий
+     * @return добавленный отзыв в упрощенном виде
+     */
     @Transactional
     public CourseReviewSimple addCourseReview(Long courseId, Long studentId, Integer rating, String comment) {
         if (courseReviewRepository.findByStudentIdAndCourseId(studentId, courseId).isPresent()) {
@@ -156,6 +226,12 @@ public class CourseService {
         return courseMapper.toSimple(courseReviewRepository.save(review));
     }
 
+    /**
+     * Получение среднего рейтинга курса.
+     *
+     * @param courseId идентификатор курса
+     * @return средний рейтинг курса
+     */
     public Double getCourseAverageRating(Long courseId) {
         return courseReviewRepository.findAverageRatingByCourseId(courseId);
     }

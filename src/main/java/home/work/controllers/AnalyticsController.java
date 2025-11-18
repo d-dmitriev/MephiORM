@@ -16,26 +16,46 @@ import java.util.Map;
 public class AnalyticsController {
     private final AnalyticsService analyticsService;
 
+    /**
+     * Получить общую статистику платформы.
+     *
+     * @return Статистика платформы
+     */
     @GetMapping("/platform")
-    public ResponseEntity<AnalyticsService.PlatformStatistics> getPlatformStatistics() {
-        AnalyticsService.PlatformStatistics statistics = analyticsService.getPlatformStatistics();
-        return ResponseEntity.ok(statistics);
+    public ResponseEntity<?> getPlatformStatistics() {
+        return ResponseEntity.ok(analyticsService.getPlatformStatistics());
     }
 
+    /**
+     * Получить статистику по конкретному курсу.
+     *
+     * @param courseId Идентификатор курса
+     * @return Статистика курса
+     */
     @GetMapping("/courses/{courseId}")
-    public ResponseEntity<AnalyticsService.CourseStatistics> getCourseStatistics(@PathVariable Long courseId) {
-        AnalyticsService.CourseStatistics statistics = analyticsService.getCourseStatistics(courseId);
-        return ResponseEntity.ok(statistics);
+    public ResponseEntity<?> getCourseStatistics(@PathVariable Long courseId) {
+        return ResponseEntity.ok(analyticsService.getCourseStatistics(courseId));
     }
 
+    /**
+     * Получить прогресс конкретного студента по конкретному курсу.
+     *
+     * @param studentId Идентификатор студента
+     * @param courseId  Идентификатор курса
+     * @return Прогресс студента
+     */
     @GetMapping("/progress")
-    public ResponseEntity<AnalyticsService.StudentProgress> getStudentProgress(
+    public ResponseEntity<?> getStudentProgress(
             @RequestParam Long studentId,
             @RequestParam Long courseId) {
-        AnalyticsService.StudentProgress progress = analyticsService.getStudentProgress(studentId, courseId);
-        return ResponseEntity.ok(progress);
+        return ResponseEntity.ok(analyticsService.getStudentProgress(studentId, courseId));
     }
 
+    /**
+     * Получить тренд по количеству регистраций на платформе.
+     *
+     * @return Тренд регистраций
+     */
     @GetMapping("/enrollments/trend")
     public ResponseEntity<Map<String, Long>> getEnrollmentTrend() {
         Map<String, Long> trend = analyticsService.getEnrollmentTrend();

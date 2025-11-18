@@ -25,6 +25,12 @@ public class ModuleService {
 
     private final ModuleMapper moduleMapper;
 
+    /**
+     * Создание нового модуля.
+     *
+     * @param request данные для создания модуля
+     * @return созданный модуль в упрощенном виде
+     */
     @Transactional
     public ModuleSimple createModule(CreateModuleRequest request) {
         var course = courseRepository.findById(request.getCourseId())
@@ -45,6 +51,13 @@ public class ModuleService {
         return moduleMapper.toSimple(moduleRepository.save(module));
     }
 
+    /**
+     * Обновление существующего модуля.
+     *
+     * @param moduleId      идентификатор модуля
+     * @param moduleDetails данные для обновления модуля
+     * @return обновленный модуль в упрощенном виде
+     */
     @Transactional
     public ModuleSimple updateModule(Long moduleId, UpdateModuleRequest moduleDetails) {
         Module module = moduleRepository.findById(moduleId)
@@ -55,15 +68,32 @@ public class ModuleService {
         return moduleMapper.toSimple(moduleRepository.save(module));
     }
 
+    /**
+     * Получение модуля по идентификатору вместе с его уроками.
+     *
+     * @param moduleId идентификатор модуля
+     * @return модуль в упрощенном виде вместе с уроками
+     */
     public ModuleSimple getModuleWithLessons(Long moduleId) {
         return moduleRepository.findByIdWithLessons(moduleId).map(moduleMapper::toSimple)
                 .orElseThrow(() -> new RuntimeException("Module not found"));
     }
 
+    /**
+     * Получение всех модулей курса.
+     *
+     * @param courseId идентификатор курса
+     * @return список модулей в упрощенном виде
+     */
     public List<ModuleSimple> getCourseModules(Long courseId) {
         return moduleRepository.findByCourseIdOrderByOrderIndex(courseId).stream().map(moduleMapper::toSimple).toList();
     }
 
+    /**
+     * Удаление модуля по идентификатору.
+     *
+     * @param moduleId идентификатор модуля
+     */
     @Transactional
     public void deleteModule(Long moduleId) {
         Module module = moduleRepository.findById(moduleId)
@@ -77,6 +107,12 @@ public class ModuleService {
         moduleRepository.delete(module);
     }
 
+    /**
+     * Переупорядочивание модулей в курсе.
+     *
+     * @param courseId         идентификатор курса
+     * @param moduleIdsInOrder список идентификаторов модулей в новом порядке
+     */
     @Transactional
     public void reorderModules(Long courseId, List<Long> moduleIdsInOrder) {
         List<Module> modules = moduleRepository.findByCourseId(courseId);

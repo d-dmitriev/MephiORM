@@ -12,10 +12,28 @@ import java.util.Optional;
  */
 @Repository
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
+    /**
+     * Находит профиль по идентификатору пользователя.
+     *
+     * @param userId Идентификатор пользователя.
+     * @return Опциональный профиль.
+     */
     Optional<Profile> findByUserId(Long userId);
 
+    /**
+     * Проверяет, существует ли профиль для указанного идентификатора пользователя.
+     *
+     * @param userId Идентификатор пользователя.
+     * @return true, если профиль существует, иначе false.
+     */
     boolean existsByUserId(Long userId);
 
+    /**
+     * Находит профиль по идентификатору пользователя вместе с информацией о пользователе.
+     *
+     * @param userId Идентификатор пользователя.
+     * @return Опциональный профиль с информацией о пользователе.
+     */
     @Query("SELECT p FROM Profile p JOIN FETCH p.user WHERE p.user.id = :userId")
     Optional<Profile> findByUserIdWithUser(Long userId);
 }

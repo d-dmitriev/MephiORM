@@ -25,6 +25,12 @@ public class LessonService {
 
     private final LessonMapper lessonMapper;
 
+    /**
+     * Создание нового урока.
+     *
+     * @param request данные для создания урока
+     * @return созданный урок в упрощенном виде
+     */
     @Transactional
     public LessonSimple createLesson(CreateLessonRequest request) {
         var module = moduleRepository.findById(request.getModuleId())
@@ -45,6 +51,13 @@ public class LessonService {
         return lessonMapper.toSimple(lessonRepository.save(lesson));
     }
 
+    /**
+     * Обновление существующего урока.
+     *
+     * @param lessonId      идентификатор урока
+     * @param lessonDetails данные для обновления урока
+     * @return обновленный урок в упрощенном виде
+     */
     @Transactional
     public LessonSimple updateLesson(Long lessonId, UpdateLessonRequest lessonDetails) {
         Lesson lesson = lessonRepository.findById(lessonId)
@@ -55,15 +68,32 @@ public class LessonService {
         return lessonMapper.toSimple(lessonRepository.save(lesson));
     }
 
+    /**
+     * Получение урока по идентификатору вместе с заданиями.
+     *
+     * @param lessonId идентификатор урока
+     * @return урок в упрощенном виде вместе с заданиями
+     */
     public LessonSimple getLessonWithAssignments(Long lessonId) {
         return lessonRepository.findByIdWithAssignments(lessonId).map(lessonMapper::toSimple)
                 .orElseThrow(() -> new RuntimeException("Lesson not found"));
     }
 
+    /**
+     * Получение всех уроков модуля.
+     *
+     * @param moduleId идентификатор модуля
+     * @return список уроков в упрощенном виде
+     */
     public List<LessonSimple> getModuleLessons(Long moduleId) {
         return lessonRepository.findByModuleIdOrderByOrderIndex(moduleId).stream().map(lessonMapper::toSimple).toList();
     }
 
+    /**
+     * Удаление урока по идентификатору.
+     *
+     * @param lessonId идентификатор урока
+     */
     @Transactional
     public void deleteLesson(Long lessonId) {
         Lesson lesson = lessonRepository.findById(lessonId)
@@ -77,6 +107,12 @@ public class LessonService {
         lessonRepository.delete(lesson);
     }
 
+    /**
+     * Переупорядочивание уроков в модуле.
+     *
+     * @param moduleId         идентификатор модуля
+     * @param lessonIdsInOrder список идентификаторов уроков в новом порядке
+     */
     @Transactional
     public void reorderLessons(Long moduleId, List<Long> lessonIdsInOrder) {
         List<Lesson> lessons = lessonRepository.findByModuleId(moduleId);
@@ -97,6 +133,12 @@ public class LessonService {
         }
     }
 
+    /**
+     * Поиск уроков по названию.
+     *
+     * @param title часть названия урока для поиска
+     * @return список найденных уроков в упрощенном виде
+     */
     public List<LessonSimple> searchLessonsByTitle(String title) {
         return lessonRepository.findAll().stream()
                 .filter(lesson -> lesson.getTitle().toLowerCase().contains(title.toLowerCase()))
