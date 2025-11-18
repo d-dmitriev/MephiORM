@@ -1,5 +1,7 @@
 # 📚 Learning Platform — Учебная платформа на Spring Boot + JPA/Hibernate
 
+[![CI](https://github.com/d-dmitriev/MephiORM/workflows/CI/badge.svg)](https://github.com/d-dmitriev/MephiORM/actions/workflows/ci.yml)
+
 ## 🎯 Описание проекта
 
 Проект представляет собой **веб-платформу для онлайн-обучения**, реализованную на **Spring Boot 3.5.6**, **Java 21**, *
