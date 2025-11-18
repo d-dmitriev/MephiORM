@@ -243,10 +243,11 @@ mvn test
 ## 📄 Swagger/OpenAPI
 
 Документация по REST API автоматически генерируется с помощью `springdoc-openapi`.  
+
 Доступна по адресу:  
-`http://localhost:8080/swagger-ui.html`  
+[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)  
 или  
-`http://localhost:8080/v3/api-docs`
+[http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 
 ---
 
