@@ -8,7 +8,6 @@ import home.work.entities.Category;
 import home.work.mappers.CategoryMapper;
 import home.work.mappers.CourseMapper;
 import home.work.repositories.CategoryRepository;
-import home.work.repositories.CourseRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-    private final CourseRepository courseRepository;
 
     private final CategoryMapper categoryMapper;
     private final CourseMapper courseMapper;
@@ -75,10 +73,6 @@ public class CategoryService {
         return category.getCourses().stream().map(courseMapper::toSimple).toList();
     }
 
-//    public List<Course> getCoursesByCategoryName(String categoryName) {
-//        return courseRepository.findByCategoryName(categoryName);
-//    }
-
     @Transactional
     public void deleteCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
@@ -90,12 +84,6 @@ public class CategoryService {
         }
 
         categoryRepository.delete(category);
-    }
-
-    public Long getCourseCountByCategory(Long categoryId) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
-        return (long) category.getCourses().size();
     }
 
     public List<CategorySimple> getPopularCategories(int limit) {

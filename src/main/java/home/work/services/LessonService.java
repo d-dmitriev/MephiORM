@@ -5,7 +5,6 @@ import home.work.dto.request.UpdateLessonRequest;
 import home.work.dto.simple.LessonSimple;
 import home.work.entities.Lesson;
 import home.work.mappers.LessonMapper;
-import home.work.repositories.AssignmentRepository;
 import home.work.repositories.LessonRepository;
 import home.work.repositories.ModuleRepository;
 import jakarta.transaction.Transactional;
@@ -23,7 +22,6 @@ import java.util.Objects;
 public class LessonService {
     private final LessonRepository lessonRepository;
     private final ModuleRepository moduleRepository;
-    private final AssignmentRepository assignmentRepository;
 
     private final LessonMapper lessonMapper;
 
@@ -66,10 +64,6 @@ public class LessonService {
         return lessonRepository.findByModuleIdOrderByOrderIndex(moduleId).stream().map(lessonMapper::toSimple).toList();
     }
 
-    public List<LessonSimple> getModuleLessonsWithAssignments(Long moduleId) {
-        return lessonRepository.findByModuleIdWithAssignments(moduleId).stream().map(lessonMapper::toSimple).toList();
-    }
-
     @Transactional
     public void deleteLesson(Long lessonId) {
         Lesson lesson = lessonRepository.findById(lessonId)
@@ -103,29 +97,10 @@ public class LessonService {
         }
     }
 
-    public Long getTotalCourseDuration(Long courseId) {
-        return lessonRepository.countByCourseId(courseId);
-    }
-
     public List<LessonSimple> searchLessonsByTitle(String title) {
         return lessonRepository.findAll().stream()
                 .filter(lesson -> lesson.getTitle().toLowerCase().contains(title.toLowerCase()))
                 .map(lessonMapper::toSimple)
                 .toList();
-    }
-
-    public Double getAverageLessonDuration(Long courseId) {
-        List<Lesson> lessons = lessonRepository.findByModuleIdWithAssignments(courseId).stream()
-                .toList();
-
-        if (lessons.isEmpty()) {
-            return 0.0;
-        }
-
-        return lessons.stream()
-                .filter(lesson -> lesson.getDuration() != null)
-                .mapToInt(Lesson::getDuration)
-                .average()
-                .orElse(0.0);
     }
 }

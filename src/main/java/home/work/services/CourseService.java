@@ -8,7 +8,6 @@ import home.work.dto.simple.CourseReviewSimple;
 import home.work.dto.simple.CourseSimple;
 import home.work.dto.simple.EnrollmentSimple;
 import home.work.entities.*;
-import home.work.entities.Module;
 import home.work.mappers.CourseMapper;
 import home.work.mappers.EnrollmentMapper;
 import home.work.repositories.*;
@@ -28,8 +27,6 @@ public class CourseService {
     private final UserRepository userRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final CategoryRepository categoryRepository;
-    private final ModuleRepository moduleRepository;
-    private final LessonRepository lessonRepository;
     private final CourseReviewRepository courseReviewRepository;
 
     private final CourseMapper courseMapper;
@@ -43,24 +40,6 @@ public class CourseService {
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
         return courseMapper.toSimple(courseRepository.save(courseMapper.toEntity(course, teacher, category)));
-    }
-
-    @Transactional
-    public Module addModuleToCourse(Long courseId, Module module) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
-
-        module.setCourse(course);
-        return moduleRepository.save(module);
-    }
-
-    @Transactional
-    public Lesson addLessonToModule(Long moduleId, Lesson lesson) {
-        Module module = moduleRepository.findById(moduleId)
-                .orElseThrow(() -> new RuntimeException("Module not found"));
-
-        lesson.setModule(module);
-        return lessonRepository.save(lesson);
     }
 
     @Transactional
@@ -83,14 +62,6 @@ public class CourseService {
 
     public CourseResponse getCourseWithLazyModules(Long courseId) {
         return getCourseDTO(courseId);
-    }
-
-    @Transactional
-    public Course getCourseWithModules(Long courseId) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
-        course.getModules().size(); // Force initialization
-        return course;
     }
 
     @Transactional

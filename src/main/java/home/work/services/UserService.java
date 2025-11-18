@@ -8,7 +8,10 @@ import home.work.dto.simple.UserSimple;
 import home.work.entities.*;
 import home.work.mappers.ProfileMapper;
 import home.work.mappers.UserMapper;
-import home.work.repositories.*;
+import home.work.repositories.EnrollmentRepository;
+import home.work.repositories.ProfileRepository;
+import home.work.repositories.SubmissionRepository;
+import home.work.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,8 +28,6 @@ public class UserService {
     private final ProfileRepository profileRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final SubmissionRepository submissionRepository;
-    private final QuizSubmissionRepository quizSubmissionRepository;
-    private final CourseReviewRepository courseReviewRepository;
     private final UserMapper userMapper;
     private final ProfileMapper profileMapper;
 
@@ -38,14 +39,6 @@ public class UserService {
         User createdUser = userRepository.save(userMapper.toEntity(user));
         return userMapper.toSimple(createdUser);
     }
-
-//    @Transactional
-//    public User createUserWithProfile(User user, Profile profile) {
-//        User savedUser = createUser(user);
-//        profile.setUser(savedUser);
-//        profileRepository.save(profile);
-//        return savedUser;
-//    }
 
     public UserWithProfile getUserById(Long userId) {
         return userRepository.findByIdWithProfile(userId).map(userMapper::toFull)
@@ -79,10 +72,6 @@ public class UserService {
         return userRepository.findByRole(UserRole.STUDENT).stream().map(userMapper::toSimple).toList();
     }
 
-//    public List<User> getStudentsByCourse(Long courseId) {
-//        return userRepository.findStudentsByCourseId(courseId);
-//    }
-
     public List<Enrollment> getUserEnrollments(Long userId) {
         return enrollmentRepository.findByStudentId(userId);
     }
@@ -90,14 +79,6 @@ public class UserService {
     public List<Submission> getUserSubmissions(Long userId) {
         return submissionRepository.findByStudentIdWithDetails(userId);
     }
-
-//    public List<QuizSubmission> getUserQuizSubmissions(Long userId) {
-//        return quizSubmissionRepository.findByStudentIdWithDetails(userId);
-//    }
-//
-//    public List<CourseReview> getUserCourseReviews(Long userId) {
-//        return courseReviewRepository.findByStudentId(userId);
-//    }
 
     @Transactional
     public void deleteUser(Long userId) {
@@ -117,18 +98,5 @@ public class UserService {
 
     public boolean isUserEnrolledInCourse(Long userId, Long courseId) {
         return enrollmentRepository.existsByStudentIdAndCourseId(userId, courseId);
-    }
-
-    public Double getUserAverageScore(Long userId) {
-        List<Submission> submissions = submissionRepository.findByStudentId(userId);
-        if (submissions.isEmpty()) {
-            return 0.0;
-        }
-
-        return submissions.stream()
-                .filter(s -> s.getScore() != null)
-                .mapToInt(Submission::getScore)
-                .average()
-                .orElse(0.0);
     }
 }

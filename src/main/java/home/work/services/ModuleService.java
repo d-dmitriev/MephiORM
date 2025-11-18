@@ -6,7 +6,6 @@ import home.work.dto.simple.ModuleSimple;
 import home.work.entities.Module;
 import home.work.mappers.ModuleMapper;
 import home.work.repositories.CourseRepository;
-import home.work.repositories.LessonRepository;
 import home.work.repositories.ModuleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ import java.util.Objects;
 public class ModuleService {
     private final ModuleRepository moduleRepository;
     private final CourseRepository courseRepository;
-    private final LessonRepository lessonRepository;
 
     private final ModuleMapper moduleMapper;
 
@@ -66,10 +64,6 @@ public class ModuleService {
         return moduleRepository.findByCourseIdOrderByOrderIndex(courseId).stream().map(moduleMapper::toSimple).toList();
     }
 
-    public List<ModuleSimple> getCourseModulesWithLessons(Long courseId) {
-        return moduleRepository.findByCourseIdWithLessons(courseId).stream().map(moduleMapper::toSimple).toList();
-    }
-
     @Transactional
     public void deleteModule(Long moduleId) {
         Module module = moduleRepository.findById(moduleId)
@@ -101,21 +95,5 @@ public class ModuleService {
             module.setOrderIndex(i + 1);
             moduleRepository.save(module);
         }
-    }
-
-    public Long getModuleCountForCourse(Long courseId) {
-        return (long) moduleRepository.findByCourseId(courseId).size();
-    }
-
-    public Double getAverageLessonsPerModule(Long courseId) {
-        List<Module> modules = moduleRepository.findByCourseIdWithLessons(courseId);
-        if (modules.isEmpty()) {
-            return 0.0;
-        }
-
-        return modules.stream()
-                .mapToInt(module -> module.getLessons().size())
-                .average()
-                .orElse(0.0);
     }
 }

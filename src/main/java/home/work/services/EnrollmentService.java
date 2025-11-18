@@ -95,10 +95,6 @@ public class EnrollmentService {
                 .orElseThrow(() -> new RuntimeException("Enrollment not found"));
     }
 
-    public Long getEnrollmentCountForCourse(Long courseId) {
-        return enrollmentRepository.countByCourseId(courseId);
-    }
-
     public Double calculateStudentProgress(Long studentId, Long courseId) {
         // Попробуем получить enrollment; если его нет — возвращаем 0.0 вместо бросания исключения,
         var enrollmentOpt = enrollmentRepository.findByStudentIdAndCourseId(studentId, courseId);
@@ -124,17 +120,5 @@ public class EnrollmentService {
                 (double) (totalLessons + totalAssignments + totalQuizzes);
 
         return Math.min(progress, 1.0);
-    }
-
-    public List<Enrollment> getCompletedEnrollments(Long studentId) {
-        return enrollmentRepository.findByStudentId(studentId).stream()
-                .filter(e -> e.getStatus() == EnrollmentStatus.COMPLETED)
-                .toList();
-    }
-
-    public List<Enrollment> getActiveEnrollments(Long studentId) {
-        return enrollmentRepository.findByStudentId(studentId).stream()
-                .filter(e -> e.getStatus() == EnrollmentStatus.ACTIVE)
-                .toList();
     }
 }

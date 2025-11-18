@@ -9,7 +9,6 @@ import home.work.mappers.CourseMapper;
 import home.work.mappers.TagMapper;
 import home.work.repositories.CourseRepository;
 import home.work.repositories.TagRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,8 +28,6 @@ public class TagService {
     private final CourseMapper courseMapper;
     private final TagMapper tagMapper;
 
-    private final EntityManager entityManager;
-
     @Transactional
     public TagSimple createTag(CreateTagRequest request) {
         if (tagRepository.findByName(request.getName()).isPresent()) {
@@ -44,11 +41,6 @@ public class TagService {
         return tagRepository.findById(tagId).map(tagMapper::toSimple)
                 .orElseThrow(() -> new RuntimeException("Tag not found"));
     }
-
-//    public Tag getTagByName(String name) {
-//        return tagRepository.findByName(name)
-//                .orElseThrow(() -> new RuntimeException("Tag not found: " + name));
-//    }
 
     public List<TagSimple> getAllTags() {
         return tagRepository.findAll().stream().map(tagMapper::toSimple).toList();
@@ -91,10 +83,6 @@ public class TagService {
         return courseRepository.findByTagId(tagId).stream().map(courseMapper::toSimple).toList();
     }
 
-//    public List<Course> getCoursesByTagName(String tagName) {
-//        return courseRepository.findByTagName(tagName);
-//    }
-
     @Transactional
     public void deleteTag(Long tagId) {
         Tag tag = tagRepository.findById(tagId)
@@ -111,17 +99,5 @@ public class TagService {
 
     public List<Object[]> getPopularTagsWithCounts() {
         return tagRepository.findPopularTagsWithCourseCount();
-    }
-
-    public List<Tag> getMostPopularTags(int limit) {
-        return getPopularTagsWithCounts().stream()
-                .limit(limit)
-                .map(result -> {
-                    Tag tag = new Tag();
-                    tag.setId((Long) result[0]);
-                    tag.setName((String) result[1]);
-                    return tag;
-                })
-                .toList();
     }
 }
