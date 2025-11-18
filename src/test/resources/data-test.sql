@@ -23,17 +23,13 @@ INSERT INTO courses (title, description, duration, category_id, teacher_id, crea
 ('Title 3', 'Description 3', 30, 3, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('Title 4', 'Description 4', 30, 3, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
---INSERT INTO course_tag (course_id, tag_id) VALUES
---(1, 1),
---(1, 3),
---(2, 4);
+INSERT INTO course_tag (course_id, tag_id) VALUES
+(1, 1),
+(1, 3),
+(2, 4);
 
 INSERT INTO modules (title, course_id) VALUES
 ('Module 1', 1);
 
---INSERT INTO lessons (title, module_id) VALUES
---('Lesson 1', 1);
-
---INSERT INTO assignments (title, due_date, lesson_id) VALUES
---('Assignment 1', NOW() - INTERVAL '1 days', 1),
---('Assignment 2', NOW() + INTERVAL '1 days', 1);
+INSERT INTO lessons (title, module_id) VALUES
+('Lesson 1', 1);

@@ -32,8 +32,8 @@ public class AssignmentService {
     private final SubmissionMapper submissionMapper;
 
     @Transactional
-    public AssignmentSimple createAssignment(Long lessonId, CreateAssignmentRequest assignment) {
-        Lesson lesson = lessonRepository.findById(lessonId)
+    public AssignmentSimple createAssignment(CreateAssignmentRequest assignment) {
+        Lesson lesson = lessonRepository.findById(assignment.getLessonId())
                 .orElseThrow(() -> new RuntimeException("Lesson not found"));
 
         Assignment assignmentCreated = assignmentRepository.save(assignmentMapper.toEntity(assignment, lesson));

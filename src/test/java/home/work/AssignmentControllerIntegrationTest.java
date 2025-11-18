@@ -1,6 +1,7 @@
 package home.work;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import home.work.dto.request.CreateAssignmentRequest;
 import home.work.entities.*;
 import home.work.entities.Module;
 import home.work.repositories.*;
@@ -92,11 +93,11 @@ class AssignmentControllerIntegrationTest {
 
     @Test
     void createAssignment_ShouldReturnCreatedAssignment() throws Exception {
-        Assignment newAssignment = new Assignment();
+        CreateAssignmentRequest newAssignment = new CreateAssignmentRequest();
         newAssignment.setTitle("Test Assignment");
         newAssignment.setDescription("Test Assignment Description");
         newAssignment.setDueDate(LocalDateTime.now().plusDays(7));
-        newAssignment.setMaxScore(100);
+        newAssignment.setLessonId(1L);
 
         mockMvc.perform(post("/api/assignments")
                         .param("lessonId", lesson.getId().toString())

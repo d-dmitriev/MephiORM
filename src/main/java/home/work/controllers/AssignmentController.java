@@ -15,9 +15,8 @@ public class AssignmentController {
 
     @PostMapping
     public ResponseEntity<?> createAssignment(
-            @RequestParam Long lessonId,
             @Valid @RequestBody CreateAssignmentRequest assignment) {
-        return ResponseEntity.ok(assignmentService.createAssignment(lessonId, assignment));
+        return ResponseEntity.ok(assignmentService.createAssignment(assignment));
     }
 
     @GetMapping("/{id}")

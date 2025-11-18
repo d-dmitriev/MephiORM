@@ -1,11 +1,16 @@
 package home.work.dto.request;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
 public class CreateUserRequest {
+    @NotEmpty
     private String name;
+    @NotEmpty
+    @Email
     private String email;
-    private String password;
+    @NotEmpty
     private String role;
 }

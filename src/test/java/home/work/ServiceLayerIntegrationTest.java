@@ -162,7 +162,8 @@ class ServiceLayerIntegrationTest {
         assignment.setTitle("Service Test Assignment");
         assignment.setDescription("Test Description");
         assignment.setDueDate(LocalDateTime.now().plusDays(7));
-        AssignmentSimple assignmentCreated = assignmentService.createAssignment(lessonCreated.getId(), assignment);
+        assignment.setLessonId(lessonCreated.getId());
+        AssignmentSimple assignmentCreated = assignmentService.createAssignment(assignment);
 
         assertNotNull(assignmentCreated.getId());
 
