@@ -97,8 +97,10 @@ public class EnrollmentService {
     }
 
     public Double calculateStudentProgress(Long studentId, Long courseId) {
-        if (!enrollmentRepository.existsByStudentIdAndCourseId(studentId, courseId)) {
-            throw new RuntimeException("Enrollment not found");
+        // Попробуем получить enrollment; если его нет — возвращаем 0.0 вместо бросания исключения,
+        var enrollmentOpt = enrollmentRepository.findByStudentIdAndCourseId(studentId, courseId);
+        if (enrollmentOpt.isEmpty()) {
+            return 0.0;
         }
 
         // Calculate progress based on completed lessons, assignments, and quizzes

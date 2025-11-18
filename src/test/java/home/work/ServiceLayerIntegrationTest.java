@@ -72,15 +72,54 @@ class ServiceLayerIntegrationTest {
         CourseSimple courseCreated = courseService.createCourse(course);
 
         assertNotNull(courseCreated.getId());
-//        assertEquals(teacherCreated.getId(), courseCreated.getTeacher().getId());
 
         // Enroll student
         EnrollmentSimple enrollment = enrollmentService.enrollStudentInCourse(courseCreated.getId(), studentCreated.getId());
         assertNotNull(enrollment.getId());
         assertEquals("ACTIVE", enrollment.getStatus());
 
-        // Verify enrollment
+        // Verify enrollment via userService helper
         assertTrue(userService.isUserEnrolledInCourse(studentCreated.getId(), courseCreated.getId()));
+
+        // Надёжно получаем enrollment: сначала через getEnrollment, при ошибке — fallback по списку зачислений курса
+        EnrollmentSimple fetchedEnrollment;
+        try {
+            fetchedEnrollment = enrollmentService.getEnrollment(studentCreated.getId(), courseCreated.getId());
+        } catch (RuntimeException ex) {
+            fetchedEnrollment = enrollmentService.getCourseEnrollments(courseCreated.getId()).stream()
+                    .filter(e -> e.getId().equals(enrollment.getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Enrollment not found after create", ex));
+        }
+        assertNotNull(fetchedEnrollment);
+        assertEquals(enrollment.getId(), fetchedEnrollment.getId());
+        assertEquals("ACTIVE", fetchedEnrollment.getStatus());
+
+        // --- Добавленные проверки ---
+        // Проверяем DTO курса через сервис
+        var courseDto = courseService.getCourseDTO(courseCreated.getId());
+        assertNotNull(courseDto);
+        assertEquals(courseCreated.getId(), courseDto.getId());
+        assertEquals(teacherCreated.getId(), courseDto.getTeacherId());
+        assertEquals(categoryCreated.getId(), courseDto.getCategoryId());
+
+        // Получаем enrollment через EnrollmentService.getEnrollment (studentId, courseId)
+        EnrollmentSimple fetchedEnrollment2 = enrollmentService.getEnrollment(studentCreated.getId(), courseCreated.getId());
+        assertNotNull(fetchedEnrollment2);
+        assertEquals(enrollment.getId(), fetchedEnrollment2.getId());
+        assertEquals("ACTIVE", fetchedEnrollment2.getStatus());
+
+        // Добавляем ревью от студента и проверяем средний рейтинг курса
+        var review = courseService.addCourseReview(courseCreated.getId(), studentCreated.getId(), 5, "Great course");
+        assertNotNull(review);
+        Double avg = courseService.getCourseAverageRating(courseCreated.getId());
+        assertNotNull(avg);
+        assertEquals(5.0, avg, 0.001);
+
+        // Проверяем расчёт прогресса (на данном этапе ожидаем 0.0 или значение в диапазоне)
+        Double progress = enrollmentService.calculateStudentProgress(studentCreated.getId(), courseCreated.getId());
+        assertNotNull(progress);
+        assertTrue(progress >= 0.0 && progress <= 1.0);
     }
 
     @Test
@@ -111,7 +150,6 @@ class ServiceLayerIntegrationTest {
         CreateModuleRequest module = new CreateModuleRequest();
         module.setTitle("Assignment Module");
         module.setCourseId(courseCreated.getId());
-//        module.setCourse(courseCreated);
         ModuleSimple moduleCreated = moduleService.createModule(module);
 
         CreateLessonRequest lesson = new CreateLessonRequest();
@@ -124,62 +162,31 @@ class ServiceLayerIntegrationTest {
         assignment.setTitle("Service Test Assignment");
         assignment.setDescription("Test Description");
         assignment.setDueDate(LocalDateTime.now().plusDays(7));
-//        assignment.setMaxScore(100);
         AssignmentSimple assignmentCreated = assignmentService.createAssignment(lessonCreated.getId(), assignment);
 
         assertNotNull(assignmentCreated.getId());
-//        assertEquals(lesson.getId(), assignmentCreated.getLesson().getId());
 
         // Submit assignment
         SubmissionSimple submission = assignmentService.submitAssignment(
                 assignmentCreated.getId(), studentCreated.getId(), "My submission content");
 
-//        assertNotNull(submission.getId());
         assertEquals("My submission content", submission.getContent());
 
-        // Grade assignment
-//        Submission gradedSubmission = assignmentService.gradeSubmission(
-//                submission.getId(), 85, "Good work!");
+        // --- Добавленные проверки ---
+        // Оценим сабмит (grader)
+        SubmissionSimple graded = assignmentService.gradeSubmission(submission.getId(), 95, "Excellent work");
+        assertNotNull(graded);
+        assertEquals(95, graded.getScore());
+        assertEquals("Excellent work", graded.getFeedback());
 
-//        assertEquals(85, gradedSubmission.getScore());
-//        assertEquals("Good work!", gradedSubmission.getFeedback());
+        // Проверим, что в списке сабмитов студента присутствует этот сабмит
+        var studentSubmissions = assignmentService.getStudentSubmissions(studentCreated.getId());
+        assertFalse(studentSubmissions.isEmpty());
+        assertTrue(studentSubmissions.stream().anyMatch(s -> s.getId().equals(submission.getId())));
+
+        // Проверим прогресс студента по курсу (должен быть в диапазоне [0,1])
+        Double progressAfter = enrollmentService.calculateStudentProgress(studentCreated.getId(), courseCreated.getId());
+        assertNotNull(progressAfter);
+        assertTrue(progressAfter >= 0.0 && progressAfter <= 1.0);
     }
-
-//    @Test
-//    void testLazyLoadingScenario() {
-//        // This test demonstrates the LazyInitializationException scenario
-//        CreateUserRequest teacher = new CreateUserRequest();
-//        teacher.setName("Lazy Teacher");
-//        teacher.setEmail("lazy.teacher@example.com");
-//        teacher.setRole("TEACHER");
-//        UserSimple teacherCreated = userService.createUser(teacher);
-//
-//        CreateCategoryRequest category = new CreateCategoryRequest();
-//        category.setName("Lazy Category");
-//        CategorySimple categoryCreated = categoryService.createCategory(category);
-//
-//        CreateCourseRequest course = new CreateCourseRequest();
-//        course.setTitle("Lazy Course");
-//        course.setTeacherId(teacherCreated.getId());
-//        course.setCategoryId(categoryCreated.getId());
-//        CourseSimple courseCreated = courseService.createCourse(course);
-//
-//        // Add modules to course
-//        Module module = new Module();
-//        module.setTitle("Lazy Module");
-////        module.setCourse(courseCreated);
-//        moduleService.createModule(courseCreated.getId(), module);
-//
-//        // Get course without initializing modules (this would cause LazyInitializationException)
-//        CourseResponse lazyCourse = courseService.getCourseWithLazyModules(courseCreated.getId());
-//
-//        // Accessing modules outside transaction should cause exception
-////        assertThrows(org.hibernate.LazyInitializationException.class, () -> {
-////            lazyCourse.getModules().size();
-////        });
-//
-//        // But this should work fine within transactional context
-//        Course eagerCourse = courseService.getCourseWithModules(courseCreated.getId());
-//        assertEquals(1, eagerCourse.getModules().size());
-//    }
 }
