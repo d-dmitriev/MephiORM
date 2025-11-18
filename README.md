@@ -55,6 +55,7 @@ src/main/java/home/work/
 | H2 (тесты)      | 2.3.232 |
 | Lombok          | 1.18.40 |
 | Maven           | 3.9+    |
+| SpringDoc       | 2.8.13  |
 
 ---
 
@@ -82,18 +83,20 @@ createdb learning_platform
 
 ```bash
 # Перейдите в корень проекта
-cd /path/to/learning-platform
+cd /path/to/MephiORM
 
 # Соберите проект
 mvn clean package
 
 # Запустите приложение
 mvn spring-boot:run
+# или
+java -jar target/learning-platform-1.0-SNAPSHOT.jar
 ```
 
 Приложение запустится на `http://localhost:8080`.
 
-> ✅ **Важно**: При первом запуске Hibernate автоматически создаст схему БД и заполнит её демо-данными из `data.sql`.
+> ✅ **Важно**: При каждом запуске Hibernate автоматически пересоздаёт схему БД и заполняет её демо-данными из `data.sql`.
 
 ---
 
