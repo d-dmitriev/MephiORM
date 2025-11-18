@@ -14,6 +14,8 @@ import home.work.repositories.SubmissionRepository;
 import home.work.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
     private final EnrollmentRepository enrollmentRepository;
@@ -40,6 +43,7 @@ public class UserService {
     @Transactional
     public UserSimple createUser(CreateUserRequest user) {
         if (userRepository.existsByEmail(user.getEmail())) {
+            log.error("User with email {} already exists", user.getEmail());
             throw new RuntimeException("User with email " + user.getEmail() + " already exists");
         }
         User createdUser = userRepository.save(userMapper.toEntity(user));
@@ -54,7 +58,10 @@ public class UserService {
      */
     public UserWithProfile getUserById(Long userId) {
         return userRepository.findByIdWithProfile(userId).map(userMapper::toFull)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> {
+                    log.error("User with id {} not found", userId);
+                    return new RuntimeException("User not found with id: " + userId);
+                });
     }
 
     /**
@@ -65,7 +72,10 @@ public class UserService {
      */
     public UserSimple getUserByEmail(String email) {
         return userRepository.findByEmail(email).map(userMapper::toSimple)
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+                .orElseThrow(() -> {
+                    log.error("User with email {} not found", email);
+                    return new RuntimeException("User not found with email: " + email);
+                });
     }
 
     /**
@@ -76,7 +86,10 @@ public class UserService {
      */
     public ProfileInfo getUserProfile(Long userId) {
         return profileRepository.findByUserId(userId).map(profileMapper::toInfo)
-                .orElseThrow(() -> new RuntimeException("Profile not found for user id: " + userId));
+                .orElseThrow(() -> {
+                    log.error("Profile not found for user id {}", userId);
+                    return new RuntimeException("Profile not found for user id: " + userId);
+                });
     }
 
     /**
@@ -89,7 +102,10 @@ public class UserService {
     @Transactional
     public ProfileInfo updateUserProfile(Long userId, UpdateUserProfileRequest profileDetails) {
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found for user id: " + userId));
+                .orElseThrow(() -> {
+                    log.error("Profile not found for user id {}", userId);
+                    return new RuntimeException("Profile not found for user id: " + userId);
+                });
 
         profileMapper.updateProfile(profileDetails, profile);
         return profileMapper.toInfo(profileRepository.save(profile));
@@ -141,10 +157,14 @@ public class UserService {
     @Transactional
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> {
+                    log.error("User with id {} not found", userId);
+                    return new RuntimeException("User not found with id: " + userId);
+                });
 
         // Проверяем можно ли удалить пользователя
         if (user.getRole() == UserRole.TEACHER && !user.getCoursesTaught().isEmpty()) {
+            log.error("Cannot delete teacher who is assigned to courses");
             throw new RuntimeException("Cannot delete teacher who is assigned to courses");
         }
 

@@ -13,6 +13,8 @@ import home.work.mappers.QuizMapper;
 import home.work.repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class QuizService {
+    private static final Logger log = LoggerFactory.getLogger(QuizService.class);
     private final QuizRepository quizRepository;
     private final ModuleRepository moduleRepository;
     private final QuestionRepository questionRepository;
@@ -42,7 +45,10 @@ public class QuizService {
     @Transactional
     public QuizSimple createQuizForModule(CreateQuizRequest request) {
         Module module = moduleRepository.findById(request.getModuleId())
-                .orElseThrow(() -> new RuntimeException("Module not found"));
+                .orElseThrow(() -> {
+                    log.error("Module with id {} not found", request.getModuleId());
+                    return new RuntimeException("Module not found");
+                });
 
         Quiz quiz = quizMapper.toEntity(request, module);
         return quizMapper.toSimple(quizRepository.save(quiz));
@@ -58,7 +64,10 @@ public class QuizService {
     @Transactional
     public QuestionSimple addQuestionToQuiz(Long quizId, CreateQuestionRequest request) {
         Quiz quiz = quizRepository.findById(quizId)
-                .orElseThrow(() -> new RuntimeException("Quiz not found"));
+                .orElseThrow(() -> {
+                    log.error("Quiz with id {} not found", quizId);
+                    return new RuntimeException("Quiz not found");
+                });
 
         Question question = quizMapper.toEntity(request, quiz);
         return quizMapper.toSimple(questionRepository.save(question));
@@ -74,7 +83,10 @@ public class QuizService {
     @Transactional
     public AnswerOptionSimple addAnswerOptionToQuestion(Long questionId, CreateAnswerOptionRequest request) {
         Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new RuntimeException("Question not found"));
+                .orElseThrow(() -> {
+                    log.error("Question with id {} not found", questionId);
+                    return new RuntimeException("Question not found");
+                });
 
         AnswerOption answerOption = quizMapper.toEntity(request, question);
         return quizMapper.toSimple(answerOptionRepository.save(answerOption));
@@ -89,7 +101,10 @@ public class QuizService {
     @Transactional
     public QuizSimple getByIdWithQuestions(Long quizId) {
         return quizRepository.findByIdWithQuestions(quizId).map(quizMapper::toSimple)
-                .orElseThrow(() -> new RuntimeException("Quiz not found"));
+                .orElseThrow(() -> {
+                    log.error("Quiz with id {} not found", quizId);
+                    return new RuntimeException("Quiz not found");
+                });
     }
 
     /**
@@ -103,9 +118,15 @@ public class QuizService {
     @Transactional
     public QuizSubmissionSimple submitQuiz(Long quizId, Long studentId, Map<Long, List<Long>> answers) {
         Quiz quiz = quizRepository.findByIdWithQuestions(quizId)
-                .orElseThrow(() -> new RuntimeException("Quiz not found"));
+                .orElseThrow(() -> {
+                    log.error("Quiz with id {} not found", quizId);
+                    return new RuntimeException("Quiz not found");
+                });
         User student = userRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> {
+                    log.error("Student with id {} not found", studentId);
+                    return new RuntimeException("Student not found");
+                });
 
         // Calculate score
         int totalQuestions = quiz.getQuestions().size();

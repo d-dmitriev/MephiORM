@@ -9,6 +9,8 @@ import home.work.repositories.LessonRepository;
 import home.work.repositories.ModuleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class LessonService {
+    private static final Logger log = LoggerFactory.getLogger(LessonService.class);
     private final LessonRepository lessonRepository;
     private final ModuleRepository moduleRepository;
 
@@ -34,7 +37,10 @@ public class LessonService {
     @Transactional
     public LessonSimple createLesson(CreateLessonRequest request) {
         var module = moduleRepository.findById(request.getModuleId())
-                .orElseThrow(() -> new RuntimeException("Module not found"));
+                .orElseThrow(() -> {
+                    log.error("Module with id {} not found", request.getModuleId());
+                    return new RuntimeException("Module not found");
+                });
 
         // Set order index if not provided
         if (request.getOrderIndex() == null) {
@@ -61,7 +67,10 @@ public class LessonService {
     @Transactional
     public LessonSimple updateLesson(Long lessonId, UpdateLessonRequest lessonDetails) {
         Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+                .orElseThrow(() -> {
+                    log.error("Lesson with id {} not found", lessonId);
+                    return new RuntimeException("Lesson not found");
+                });
 
         lessonMapper.updateLesson(lessonDetails, lesson);
 
@@ -76,7 +85,10 @@ public class LessonService {
      */
     public LessonSimple getLessonWithAssignments(Long lessonId) {
         return lessonRepository.findByIdWithAssignments(lessonId).map(lessonMapper::toSimple)
-                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+                .orElseThrow(() -> {
+                    log.error("Lesson with id {} not found", lessonId);
+                    return new RuntimeException("Lesson not found");
+                });
     }
 
     /**
@@ -97,10 +109,14 @@ public class LessonService {
     @Transactional
     public void deleteLesson(Long lessonId) {
         Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+                .orElseThrow(() -> {
+                    log.error("Lesson with id {} not found", lessonId);
+                    return new RuntimeException("Lesson not found");
+                });
 
         // Check if lesson has assignments
         if (!lesson.getAssignments().isEmpty()) {
+            log.error("Cannot delete lesson with id {} because it has assignments", lessonId);
             throw new RuntimeException("Cannot delete lesson that contains assignments");
         }
 
@@ -118,6 +134,7 @@ public class LessonService {
         List<Lesson> lessons = lessonRepository.findByModuleId(moduleId);
 
         if (lessons.size() != lessonIdsInOrder.size()) {
+            log.error("Mismatch in lesson count for module id {}: expected {}, got {}", moduleId, lessons.size(), lessonIdsInOrder.size());
             throw new RuntimeException("Invalid lesson order list");
         }
 
@@ -126,7 +143,10 @@ public class LessonService {
             Lesson lesson = lessons.stream()
                     .filter(l -> l.getId().equals(lessonId))
                     .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Lesson not found: " + lessonId));
+                    .orElseThrow(() -> {
+                        log.error("Lesson with id {} not found in module id {}", lessonId, moduleId);
+                        return new RuntimeException("Lesson not found: " + lessonId);
+                    });
 
             lesson.setOrderIndex(i + 1);
             lessonRepository.save(lesson);

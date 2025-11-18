@@ -10,6 +10,8 @@ import home.work.mappers.CourseMapper;
 import home.work.repositories.CategoryRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
+    private static final Logger log = LoggerFactory.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
 
     private final CategoryMapper categoryMapper;
@@ -34,6 +37,7 @@ public class CategoryService {
     @Transactional
     public CategorySimple createCategory(CreateCategoryRequest category) {
         if (categoryRepository.findByName(category.getName()).isPresent()) {
+            log.error("Category with name {} already exists", category.getName());
             throw new RuntimeException("Category with name " + category.getName() + " already exists");
         }
         return categoryMapper.toSimple(categoryRepository.save(categoryMapper.toEntity(category)));
@@ -49,13 +53,17 @@ public class CategoryService {
     @Transactional
     public CategorySimple updateCategory(Long categoryId, UpdateCategoryRequest categoryDetails) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> {
+                    log.error("Category with id {} not found", categoryId);
+                    return new RuntimeException("Category not found");
+                });
 
         if (categoryDetails.getName() != null) {
             // Check if name is already taken by another category
             categoryRepository.findByName(categoryDetails.getName())
                     .ifPresent(existingCategory -> {
                         if (!existingCategory.getId().equals(categoryId)) {
+                            log.error("Category name {} is already taken", categoryDetails.getName());
                             throw new RuntimeException("Category name already taken");
                         }
                     });
@@ -74,7 +82,10 @@ public class CategoryService {
      */
     public CategorySimple getCategoryById(Long categoryId) {
         return categoryRepository.findById(categoryId).map(categoryMapper::toSimple)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> {
+                    log.error("Category with id {} not found", categoryId);
+                    return new RuntimeException("Category not found");
+                });
     }
 
     /**
@@ -85,7 +96,10 @@ public class CategoryService {
      */
     public CategorySimple getCategoryByName(String name) {
         return categoryRepository.findByName(name).map(categoryMapper::toSimple)
-                .orElseThrow(() -> new RuntimeException("Category not found: " + name));
+                .orElseThrow(() -> {
+                    log.error("Category with name {} not found", name);
+                    return new RuntimeException("Category not found: " + name);
+                });
     }
 
     /**
@@ -105,7 +119,10 @@ public class CategoryService {
      */
     public List<CourseSimple> getCoursesByCategory(Long categoryId) {
         Category category = categoryRepository.findByIdWithCourses(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> {
+                    log.error("Category with id {} not found", categoryId);
+                    return new RuntimeException("Category not found");
+                });
         return category.getCourses().stream().map(courseMapper::toSimple).toList();
     }
 
@@ -117,10 +134,14 @@ public class CategoryService {
     @Transactional
     public void deleteCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> {
+                    log.error("Category with id {} not found", categoryId);
+                    return new RuntimeException("Category not found");
+                });
 
         // Check if category has courses
         if (!category.getCourses().isEmpty()) {
+            log.error("Cannot delete category with id {} because it contains courses", categoryId);
             throw new RuntimeException("Cannot delete category that contains courses");
         }
 

@@ -9,6 +9,8 @@ import home.work.repositories.CourseRepository;
 import home.work.repositories.ModuleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class ModuleService {
+    private static final Logger log = LoggerFactory.getLogger(ModuleService.class);
     private final ModuleRepository moduleRepository;
     private final CourseRepository courseRepository;
 
@@ -34,7 +37,10 @@ public class ModuleService {
     @Transactional
     public ModuleSimple createModule(CreateModuleRequest request) {
         var course = courseRepository.findById(request.getCourseId())
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+                .orElseThrow(() -> {
+                    log.error("Course with id {} not found", request.getCourseId());
+                    return new RuntimeException("Course not found");
+                });
 
         // Set order index if not provided
         if (request.getOrderIndex() == null) {
@@ -61,7 +67,10 @@ public class ModuleService {
     @Transactional
     public ModuleSimple updateModule(Long moduleId, UpdateModuleRequest moduleDetails) {
         Module module = moduleRepository.findById(moduleId)
-                .orElseThrow(() -> new RuntimeException("Module not found"));
+                .orElseThrow(() -> {
+                    log.error("Module with id {} not found", moduleId);
+                    return new RuntimeException("Module not found");
+                });
 
         moduleMapper.updateModule(moduleDetails, module);
 
@@ -76,7 +85,10 @@ public class ModuleService {
      */
     public ModuleSimple getModuleWithLessons(Long moduleId) {
         return moduleRepository.findByIdWithLessons(moduleId).map(moduleMapper::toSimple)
-                .orElseThrow(() -> new RuntimeException("Module not found"));
+                .orElseThrow(() -> {
+                    log.error("Module with id {} not found", moduleId);
+                    return new RuntimeException("Module not found");
+                });
     }
 
     /**
@@ -97,10 +109,14 @@ public class ModuleService {
     @Transactional
     public void deleteModule(Long moduleId) {
         Module module = moduleRepository.findById(moduleId)
-                .orElseThrow(() -> new RuntimeException("Module not found"));
+                .orElseThrow(() -> {
+                    log.error("Module with id {} not found", moduleId);
+                    return new RuntimeException("Module not found");
+                });
 
         // Check if module has lessons
         if (!module.getLessons().isEmpty()) {
+            log.error("Cannot delete module with id {} because it contains lessons", moduleId);
             throw new RuntimeException("Cannot delete module that contains lessons");
         }
 
@@ -118,6 +134,7 @@ public class ModuleService {
         List<Module> modules = moduleRepository.findByCourseId(courseId);
 
         if (modules.size() != moduleIdsInOrder.size()) {
+            log.error("Invalid module order list for course id {}", courseId);
             throw new RuntimeException("Invalid module order list");
         }
 
@@ -126,7 +143,10 @@ public class ModuleService {
             Module module = modules.stream()
                     .filter(m -> m.getId().equals(moduleId))
                     .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Module not found: " + moduleId));
+                    .orElseThrow(() -> {
+                        log.error("Module with id {} not found in course id {}", moduleId, courseId);
+                        return new RuntimeException("Module not found: " + moduleId);
+                    });
 
             module.setOrderIndex(i + 1);
             moduleRepository.save(module);

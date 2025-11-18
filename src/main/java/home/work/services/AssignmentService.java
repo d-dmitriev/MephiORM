@@ -15,6 +15,8 @@ import home.work.repositories.SubmissionRepository;
 import home.work.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,6 +28,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AssignmentService {
+    private static final Logger log = LoggerFactory.getLogger(AssignmentService.class);
+
     private final AssignmentRepository assignmentRepository;
     private final LessonRepository lessonRepository;
     private final SubmissionRepository submissionRepository;
@@ -43,7 +47,10 @@ public class AssignmentService {
     @Transactional
     public AssignmentSimple createAssignment(CreateAssignmentRequest assignment) {
         Lesson lesson = lessonRepository.findById(assignment.getLessonId())
-                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+                .orElseThrow(() -> {
+                    log.error("Lesson with id {} not found", assignment.getLessonId());
+                    return new RuntimeException("Lesson not found");
+                });
 
         Assignment assignmentCreated = assignmentRepository.save(assignmentMapper.toEntity(assignment, lesson));
         return assignmentMapper.toSimple(assignmentCreated);
@@ -60,13 +67,20 @@ public class AssignmentService {
     @Transactional
     public SubmissionSimple submitAssignment(Long assignmentId, Long studentId, String content) {
         if (submissionRepository.findByStudentIdAndAssignmentId(studentId, assignmentId).isPresent()) {
+            log.error("Student with id {} has already submitted assignment with id {}", studentId, assignmentId);
             throw new RuntimeException("Student has already submitted this assignment");
         }
 
         Assignment assignment = assignmentRepository.findById(assignmentId)
-                .orElseThrow(() -> new RuntimeException("Assignment not found"));
+                .orElseThrow(() -> {
+                    log.error("Assignment with id {} not found", assignmentId);
+                    return new RuntimeException("Assignment not found");
+                });
         User student = userRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> {
+                    log.error("Student with id {} not found", studentId);
+                    return new RuntimeException("Student not found");
+                });
 
         Submission submission = new Submission();
         submission.setAssignment(assignment);
@@ -87,7 +101,10 @@ public class AssignmentService {
     @Transactional
     public SubmissionSimple gradeSubmission(Long submissionId, Integer score, String feedback) {
         Submission submission = submissionRepository.findById(submissionId)
-                .orElseThrow(() -> new RuntimeException("Submission not found"));
+                .orElseThrow(() -> {
+                    log.error("Submission with id {} not found", submissionId);
+                    return new RuntimeException("Submission not found");
+                });
 
         submission.setScore(score);
         submission.setFeedback(feedback);
@@ -143,6 +160,9 @@ public class AssignmentService {
      */
     public AssignmentSimple getByIdWithSubmissions(Long courseId) {
         return assignmentRepository.findByIdWithSubmissions(courseId).map(assignmentMapper::toSimple)
-                .orElseThrow(() -> new RuntimeException("Assignment not found"));
+                .orElseThrow(() -> {
+                    log.error("Assignment with id {} not found", courseId);
+                    return new RuntimeException("Assignment not found");
+                });
     }
 }

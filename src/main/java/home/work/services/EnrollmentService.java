@@ -8,6 +8,8 @@ import home.work.mappers.EnrollmentMapper;
 import home.work.repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class EnrollmentService {
+    private static final Logger log = LoggerFactory.getLogger(EnrollmentService.class);
     private final EnrollmentRepository enrollmentRepository;
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
@@ -37,15 +40,23 @@ public class EnrollmentService {
     @Transactional
     public EnrollmentSimple enrollStudentInCourse(Long courseId, Long studentId) {
         if (enrollmentRepository.existsByStudentIdAndCourseId(studentId, courseId)) {
+            log.error("Student with id {} is already enrolled in course with id {}", studentId, courseId);
             throw new RuntimeException("Student is already enrolled in this course");
         }
 
         var course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+                .orElseThrow(() -> {
+                    log.error("Course with id {} not found", courseId);
+                    return new RuntimeException("Course not found");
+                });
         var student = userRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> {
+                    log.error("Student with id {} not found", studentId);
+                    return new RuntimeException("Student not found");
+                });
 
         if (student.getRole() != UserRole.STUDENT) {
+            log.error("User with id {} is not a student", studentId);
             throw new RuntimeException("Only students can enroll in courses");
         }
 
@@ -67,7 +78,10 @@ public class EnrollmentService {
     @Transactional
     public void unenrollStudentFromCourse(Long courseId, Long studentId) {
         Enrollment enrollment = enrollmentRepository.findByStudentIdAndCourseId(studentId, courseId)
-                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
+                .orElseThrow(() -> {
+                    log.error("Enrollment for student id {} and course id {} not found", studentId, courseId);
+                    return new RuntimeException("Enrollment not found");
+                });
 
         enrollmentRepository.delete(enrollment);
     }
@@ -82,7 +96,10 @@ public class EnrollmentService {
     @Transactional
     public EnrollmentSimple updateEnrollmentStatus(Long enrollmentId, String status) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
-                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
+                .orElseThrow(() -> {
+                    log.error("Enrollment with id {} not found", enrollmentId);
+                    return new RuntimeException("Enrollment not found");
+                });
 
         enrollmentMapper.updateEnrollmentStatus(status, enrollment);
         return enrollmentMapper.toSimple(enrollmentRepository.save(enrollment));
@@ -98,9 +115,13 @@ public class EnrollmentService {
     @Transactional
     public EnrollmentSimple updateEnrollmentProgress(Long enrollmentId, Double progress) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
-                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
+                .orElseThrow(() -> {
+                    log.error("Enrollment with id {} not found", enrollmentId);
+                    return new RuntimeException("Enrollment not found");
+                });
 
         if (progress < 0.0 || progress > 1.0) {
+            log.error("Invalid progress value: {}. Must be between 0.0 and 1.0", progress);
             throw new RuntimeException("Progress must be between 0.0 and 1.0");
         }
 
@@ -138,7 +159,10 @@ public class EnrollmentService {
      */
     public EnrollmentSimple getEnrollment(Long studentId, Long courseId) {
         return enrollmentRepository.findByStudentIdAndCourseId(studentId, courseId).map(enrollmentMapper::toSimple)
-                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
+                .orElseThrow(() -> {
+                    log.error("Enrollment for student id {} and course id {} not found", studentId, courseId);
+                    return new RuntimeException("Enrollment not found");
+                });
     }
 
     /**

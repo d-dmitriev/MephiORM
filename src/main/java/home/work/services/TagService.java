@@ -11,6 +11,8 @@ import home.work.repositories.CourseRepository;
 import home.work.repositories.TagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class TagService {
+    private static final Logger log = LoggerFactory.getLogger(TagService.class);
     private final TagRepository tagRepository;
     private final CourseRepository courseRepository;
 
@@ -37,6 +40,7 @@ public class TagService {
     @Transactional
     public TagSimple createTag(CreateTagRequest request) {
         if (tagRepository.findByName(request.getName()).isPresent()) {
+            log.error("Tag with name {} already exists", request.getName());
             throw new RuntimeException("Tag with name " + request.getName() + " already exists");
         }
         Tag tag = tagMapper.toEntity(request);
@@ -51,7 +55,10 @@ public class TagService {
      */
     public TagSimple getTagById(Long tagId) {
         return tagRepository.findById(tagId).map(tagMapper::toSimple)
-                .orElseThrow(() -> new RuntimeException("Tag not found"));
+                .orElseThrow(() -> {
+                    log.error("Tag with id {} not found", tagId);
+                    return new RuntimeException("Tag not found");
+                });
     }
 
     /**
@@ -82,11 +89,13 @@ public class TagService {
     @Transactional
     public void addTagsToCourse(Long courseId, Set<Long> tagIds) {
         if (!courseRepository.existsById(courseId)) {
+            log.error("Course with id {} not found", courseId);
             throw new RuntimeException("Course not found");
         }
 
         List<Tag> existingTags = tagRepository.findAllById(tagIds);
         if (existingTags.size() != tagIds.size()) {
+            log.error("Some tags not found for ids: {}", tagIds);
             throw new RuntimeException("Some tags not found");
         }
 
@@ -103,9 +112,15 @@ public class TagService {
     @Transactional
     public void removeTagFromCourse(Long courseId, Long tagId) {
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+                .orElseThrow(() -> {
+                    log.error("Course with id {} not found", courseId);
+                    return new RuntimeException("Course not found");
+                });
         Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new RuntimeException("Tag not found"));
+                .orElseThrow(() -> {
+                    log.error("Tag with id {} not found", tagId);
+                    return new RuntimeException("Tag not found");
+                });
 
         courseRepository.removeTagFromCourse(courseId, tagId);
     }
@@ -138,7 +153,10 @@ public class TagService {
     @Transactional
     public void deleteTag(Long tagId) {
         Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new RuntimeException("Tag not found"));
+                .orElseThrow(() -> {
+                    log.error("Tag with id {} not found", tagId);
+                    return new RuntimeException("Tag not found");
+                });
 
         // Remove tag from all courses
         for (Course course : tag.getCourses()) {

@@ -13,6 +13,8 @@ import home.work.mappers.EnrollmentMapper;
 import home.work.repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CourseService {
+    private static final Logger log = LoggerFactory.getLogger(CourseService.class);
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
     private final EnrollmentRepository enrollmentRepository;
@@ -41,9 +44,15 @@ public class CourseService {
     @Transactional
     public CourseSimple createCourse(CreateCourseRequest course) {
         User teacher = userRepository.findById(course.getTeacherId())
-                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+                .orElseThrow(() -> {
+                    log.error("Teacher with id {} not found", course.getTeacherId());
+                    return new RuntimeException("Teacher not found");
+                });
         Category category = categoryRepository.findById(course.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> {
+                    log.error("Category with id {} not found", course.getCategoryId());
+                    return new RuntimeException("Category not found");
+                });
 
         return courseMapper.toSimple(courseRepository.save(courseMapper.toEntity(course, teacher, category)));
     }
@@ -58,13 +67,20 @@ public class CourseService {
     @Transactional
     public EnrollmentSimple enrollStudent(Long courseId, Long studentId) {
         if (enrollmentRepository.existsByStudentIdAndCourseId(studentId, courseId)) {
+            log.error("Student with id {} is already enrolled in course with id {}", studentId, courseId);
             throw new RuntimeException("Student already enrolled in this course");
         }
 
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+                .orElseThrow(() -> {
+                    log.error("Course with id {} not found", courseId);
+                    return new RuntimeException("Course not found");
+                });
         User student = userRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> {
+                    log.error("Student with id {} not found", studentId);
+                    return new RuntimeException("Student not found");
+                });
 
         Enrollment enrollment = new Enrollment();
         enrollment.setCourse(course);
@@ -115,7 +131,10 @@ public class CourseService {
     @Transactional
     public CourseResponse getCourseDTO(Long courseId) {
         Course course = courseRepository.findByIdWithTeacherAndCategory(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+                .orElseThrow(() -> {
+                    log.error("Course with id {} not found", courseId);
+                    return new RuntimeException("Course not found");
+                });
 
         return new CourseResponse(
                 course.getId(),
@@ -140,7 +159,10 @@ public class CourseService {
     @Transactional
     public CourseWithModulesResponse getCourseWithModulesDTO(Long courseId) {
         Course course = courseRepository.findByIdWithModules(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+                .orElseThrow(() -> {
+                    log.error("Course with id {} not found", courseId);
+                    return new RuntimeException("Course not found");
+                });
 
         CourseWithModulesResponse dto = new CourseWithModulesResponse(
                 course.getId(),
@@ -209,13 +231,20 @@ public class CourseService {
     @Transactional
     public CourseReviewSimple addCourseReview(Long courseId, Long studentId, Integer rating, String comment) {
         if (courseReviewRepository.findByStudentIdAndCourseId(studentId, courseId).isPresent()) {
+            log.error("Student with id {} has already reviewed course with id {}", studentId, courseId);
             throw new RuntimeException("Student has already reviewed this course");
         }
 
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+                .orElseThrow(() -> {
+                    log.error("Course with id {} not found", courseId);
+                    return new RuntimeException("Course not found");
+                });
         User student = userRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> {
+                    log.error("Student with id {} not found", studentId);
+                    return new RuntimeException("Student not found");
+                });
 
         CourseReview review = new CourseReview();
         review.setCourse(course);
