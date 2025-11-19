@@ -11,14 +11,14 @@ import org.hibernate.LazyInitializationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@TestPropertySource(locations = "classpath:application-test.properties")
+@ActiveProfiles("test")
 public class IntegrationTest {
     @Autowired
     private UserRepository userRepository;
@@ -36,7 +36,6 @@ public class IntegrationTest {
 
         assertNotNull(teacher.getId());
         assertEquals(UserRole.TEACHER, teacher.getRole());
-        assertEquals(5, teacher.getId());
     }
 
     @Test

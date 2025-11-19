@@ -1,13 +1,15 @@
 server:
   port: ${SERVER_PORT:8080}
 spring:
+  profiles:
+    active: ${SPRING_ACTIVE_PROFILE:dev}
   main:
     banner-mode: off
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:learning_platform}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:mysecretpassword}
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
   jpa:
     open-in-view: false
     properties:
@@ -21,10 +23,3 @@ spring:
   sql:
     init:
       mode: always
-springdoc:
-  api-docs:
-    enabled: true
-#logging:
-#  level:
-#    org.hibernate.SQL: DEBUG
-#    org.hibernate.orm.jdbc.bind: TRACE

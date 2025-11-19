@@ -1,0 +1,7 @@
+spring:
+  sql:
+    init:
+      data-locations: classpath:data-test.sql
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
