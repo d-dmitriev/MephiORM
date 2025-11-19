@@ -24,7 +24,7 @@ services:
 
   postgres:
     image: postgres:latest
-    profiles: [prod]
+    profiles: [ prod ]
     container_name: db
     environment:
       POSTGRES_DB: ${DB_NAME:-learning_platform}
