@@ -17,6 +17,9 @@ services:
       - DB_NAME=${DB_NAME:-learning_platform}
       - DB_USERNAME=${DB_USERNAME:-postgres}
       - DB_PASSWORD=${DB_PASSWORD:-postgres}
+#      - DB_INIT=always
+#      - DB_DDL=create-drop
+#      - API_DOC_ENABLED=true
     restart: unless-stopped
 
   postgres:

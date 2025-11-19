@@ -5,7 +5,10 @@ spring:
     password: ${DB_PASSWORD:mysecretpassword}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${DB_DDL:update}
   sql:
     init:
-      mode: never
+      mode: ${DB_INIT:never}
+springdoc:
+  api-docs:
+    enabled: ${API_DOC_ENABLED:false}

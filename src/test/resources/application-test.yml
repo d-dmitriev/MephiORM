@@ -2,6 +2,9 @@ spring:
   sql:
     init:
       data-locations: classpath:data-test.sql
+springdoc:
+  api-docs:
+    enabled: false
 logging:
   level:
     org.hibernate.SQL: DEBUG
