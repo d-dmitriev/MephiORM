@@ -12,6 +12,8 @@ spring:
 springdoc:
   api-docs:
     enabled: ${API_DOC_ENABLED:false}
+  swagger-ui:
+    enabled: ${API_DOC_ENABLED:false}
 app:
   http:
     cors:
