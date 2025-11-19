@@ -90,7 +90,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
      * @param tagId    идентификатор тега
      */
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query(value = "INSERT INTO course_tag (course_id, tag_id) VALUES (:courseId, :tagId) ON CONFLICT DO NOTHING",
+    @Query(value = "INSERT INTO course_tag (course_id, tag_id) VALUES (:courseId, :tagId)",
             nativeQuery = true)
     void addTagsToCourseWithClear(Long courseId, Long tagId);
 
