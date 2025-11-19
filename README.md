@@ -69,7 +69,11 @@ src/main/java/home/work/
 - **PostgreSQL 12+**
 - **Maven 3.9+**
 
-### 2. Настройка базы данных
+или
+
+- *Docker*
+
+### 2. Настройка базы данных (при запуске с postgres)
 
 Создайте базу данных в PostgreSQL:
 
@@ -79,9 +83,11 @@ createdb learning_platform
 
 Убедитесь, что пользователь `postgres` существует и имеет пароль (по умолчанию `mysecretpassword`).
 
-> 💡 Для изменения параметров подключения — отредактируйте `src/main/resources/application.yml`.
+> 💡 Для изменения параметров подключения — отредактируйте `src/main/resources/application-prod.yml` или установите переменную окружения `DB_PASSWORD`.
 
 ### 3. Запуск приложения
+
+#### Локально 
 
 ```bash
 # Перейдите в корень проекта
@@ -94,6 +100,21 @@ mvn clean package
 mvn spring-boot:run
 # или
 java -jar target/learning-platform-1.0-SNAPSHOT.jar
+```
+
+#### В Docker
+
+```bash
+# Запуск c H2 базой (использование профиля dev, по умолчанию)
+docker compose up --build
+# Запуск с Postgres (установка профиля prod)
+COMPOSE_PROFILES=prod docker compose up --build
+# добавить DB_INIT=always DB_DDL=create-drop - для инициализации базы
+DB_INIT=always DB_DDL=create-drop COMPOSE_PROFILES=prod docker compose up --build
+# API_DOC_ENABLED=true - для включения Swagger UI
+API_DOC_ENABLED=true COMPOSE_PROFILES=prod docker compose up --build
+# Полный вариант
+API_DOC_ENABLED=true DB_INIT=always DB_DDL=create-drop COMPOSE_PROFILES=prod docker compose up --build
 ```
 
 Приложение запустится на `http://localhost:8080`.

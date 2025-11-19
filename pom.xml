@@ -135,7 +135,7 @@
 
     <profiles>
         <profile>
-            <id>test</id>
+            <id>dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>

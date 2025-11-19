@@ -17,9 +17,9 @@ services:
       - DB_NAME=${DB_NAME:-learning_platform}
       - DB_USERNAME=${DB_USERNAME:-postgres}
       - DB_PASSWORD=${DB_PASSWORD:-postgres}
-#      - DB_INIT=always
-#      - DB_DDL=create-drop
-#      - API_DOC_ENABLED=true
+      - DB_INIT=${DB_INIT:-never} # always - для запуска с данными
+      - DB_DDL=${DB_DDL:-update} # create-drop - для удаления базы при остановке
+      - API_DOC_ENABLED=${API_DOC_ENABLED:-false} # true - для включения Swagger UI
     restart: unless-stopped
 
   postgres:
