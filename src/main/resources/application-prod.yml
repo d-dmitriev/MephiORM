@@ -12,3 +12,10 @@ spring:
 springdoc:
   api-docs:
     enabled: ${API_DOC_ENABLED:false}
+app:
+  http:
+    cors:
+      origins: ${APP_HTTP_CORS_ORIGINS:http://localhost:3000}
+      methods: ${APP_HTTP_CORS_METHODS:GET,POST,PUT,DELETE,OPTIONS}
+      headers: ${APP_HTTP_CORS_HEADERS:authorization,content-type}
+      allow-credentials: ${APP_HTTP_CORS_ALLOW_CREDENTIALS:true}
